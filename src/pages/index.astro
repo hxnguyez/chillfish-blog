@@ -1,0 +1,17 @@
+---
+import fs from 'fs';
+
+const posts = fs.readdirSync('./src/content/blog/ctf');
+---
+
+<h1>chillfish</h1>
+
+<ul>
+  {posts.map(post => (
+    <li>
+      <a href={`/blog/ctf/${post.replace('.md','')}`}>
+        {post}
+      </a>
+    </li>
+  ))}
+</ul>

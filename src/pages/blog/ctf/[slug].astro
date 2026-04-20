@@ -1,0 +1,10 @@
+---
+import { Astro } from 'astro';
+
+const { slug } = Astro.params;
+const post = await import(`../../../content/blog/ctf/${slug}.md`);
+const Content = post.default;
+---
+
+<h1>{slug}</h1>
+<Content />
