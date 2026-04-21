@@ -1,0 +1,452 @@
+---
+title: Built-in Components
+description: SHBlog Next provides several built-in components that you can easily use in posts to improve how content is presented. These components include file trees, code blocks, step indicators, and more. Below is an introduction to some commonly used built-in components.
+pubDate: 2026-04-04T12:41:05.257Z
+tags:
+  - Tips
+category:
+  - Astro Default Article
+---
+
+import Steps from "@shComponents/Steps/Steps.astro";
+import Step from "@shComponents/Steps/Step.astro";
+
+import Files from "@shComponents/Files/Files.astro";
+import Folder from "@shComponents/Files/Folder.astro";
+import File from "@shComponents/Files/File.astro";
+
+import GithubCard from "@shComponents/GHCard/GitHubCard.astro";
+
+import Tabs from "@shComponents/Tab/Tabs.astro";
+import TabItem from "@shComponents/Tab/TabItem.astro";
+
+## Step Indicator
+
+- **Location:**
+  - `src/components/post/Steps/Steps.astro`
+  - `src/components/post/Steps/Step.astro`
+- **Import path:**
+  - `@shComponents/Steps/Steps.astro`
+  - `@shComponents/Steps/Step.astro`
+- **Props:**
+  | Component | Prop name | Type | Description |
+  | --- | --- | --- | --- |
+  | `<Steps />` | `start` | number | Sets the starting step number of the step indicator. Default is 1. |
+  | `<Steps />` | `class` | string | Additional CSS class for customizing step indicator styles. |
+  | `<Step />` |`title` | string | The step title displayed in the step indicator. |
+
+You can use the `Steps` and `Step` components to create a step indicator, which is useful for showing workflows or guides.
+
+```astro
+<Steps start={3}>
+  <Step title="Step One">This is the description for step one.</Step>
+  <Step title="Step Two">This is the description for step two.</Step>
+  <Step title="Step Three">
+    This is the description for step three. You can add more content here to explain this step in detail.
+    <ol>
+      <li>This is a list item. Yes, you can use lists.</li>
+      <li>But you need to add HTML tags manually.</li>
+    </ol>
+  </Step>
+</Steps>
+```
+
+<Steps start={3}>
+  <Step title="Step One">This is the description for step one.</Step>
+  <Step title="Step Two">This is the description for step two.</Step>
+  <Step title="Step Three">
+    This is the description for step three. You can add more content here to explain this step in detail.
+    <ol>
+      <li>This is a list item. Yes, you can use lists.</li>
+      <li>But you need to add HTML tags manually.</li>
+    </ol>
+  </Step>
+</Steps>
+
+This renders a step indicator with three steps, each with a title and description. You can add more steps as needed or customize each step's content.
+
+## File Tree
+
+- **Location:**
+  - `src/components/post/Files/Files.astro`
+  - `src/components/post/Files/Folder.astro`
+  - `src/components/post/Files/File.astro`
+- **Import path:**
+  - `@shComponents/Files/Files.astro`
+  - `@shComponents/Files/Folder.astro`
+  - `@shComponents/Files/File.astro`
+- **Props:**
+  | Component | Prop name | Type | Description |
+  | --- | --- | --- | --- |
+  | `<Files />` | `path` | string | Sets the root path of the file tree (optional). |
+  | `<Files />` | `class` | string | Additional CSS class for customizing file tree styles. |
+  | `<Folder />` | `name` | string | Folder name. |
+  | `<Folder />` | `defaultOpen` | boolean | Sets whether the folder is expanded by default (optional, default is `False`). |
+  | `<Folder />` | `highlighted` | boolean | Sets whether the folder is highlighted (optional, default is `False`). |
+  | `<File />` | `name` | string | File name. |
+  | `<File />` | `icon` | FileIconType | Sets the file icon type (default is `normal`; see options below). |
+  | `<File />` | `highlighted` | boolean | Sets whether the file is highlighted (optional, default is `False`). Note that highlighting a file does not automatically highlight its parent folder. To highlight a folder, set the `highlighted` prop on `<Folder />`. |
+
+```astro
+<Files path="/sh-blog-next/">
+  <Folder name="app" defaultOpen>
+    <File name="layout.tsx" icon="code" />
+    <File name="page.tsx" />
+    <File name="global.css" highlighted />
+  </Folder>
+  <Folder name="components" highlighted>
+    <File name="button.tsx" icon="code" />
+    <File name="tabs.tsx" />
+    <File name="dialog.tsx" highlighted />
+    <Folder name="core">
+      <File name="Header.astro" />
+      <File name="Footer.astro" />
+    </Folder>
+  </Folder>
+  <File name="package.json" />
+</Files>
+```
+
+<Files path="/sh-blog-next/">
+  <Folder name="app" defaultOpen>
+    <File name="layout.tsx" icon="code" />
+    <File name="page.tsx" />
+    <File name="global.css" highlighted />
+  </Folder>
+  <Folder name="components" highlighted>
+    <File name="button.tsx" icon="code" />
+    <File name="tabs.tsx" />
+    <File name="dialog.tsx" highlighted />
+    <Folder name="core">
+      <File name="Header.astro" />
+      <File name="Footer.astro" />
+    </Folder>
+  </Folder>
+  <File name="package.json" />
+</Files>
+
+Here are all available icons:
+
+```astro
+<Files>
+  <Folder name="Development" defaultOpen>
+    <File name="source_code.ts" icon="code" />
+    <File name="config.yaml" icon="config" />
+    <File name="script.sh" icon="terminal" />
+    <File name="compiled.bin" icon="binary" />
+  </Folder>
+  <Folder name="Media Assets" defaultOpen>
+    <File name="background.png" icon="image" />
+    <File name="podcast.mp3" icon="audio" />
+    <File name="tutorial.mp4" icon="video" />
+    <File name="model_3d.obj" icon="3d" />
+  </Folder>
+  <Folder name="Documents">
+    <File name="report.pdf" icon="document" />
+    <File name="data_sheet.xlsx" icon="sheet" />
+    <File name="ssl_cert.crt" icon="certificate" />
+    <File name="private.key" icon="key" />
+  </Folder>
+  <Folder name="System & Others" defaultOpen>
+    <File name="backup.zip" icon="archive" />
+    <File name="scanner_output.pdf" icon="scan" />
+    <File name="unknown_file" icon="not-found" />
+    <File name="regular_note.txt" icon="normal" />
+  </Folder>
+</Files>
+```
+
+<Files>
+  <Folder name="Development" defaultOpen>
+    <File name="source_code.ts" icon="code" />
+    <File name="config.yaml" icon="config" />
+    <File name="script.sh" icon="terminal" />
+    <File name="compiled.bin" icon="binary" />
+  </Folder>
+  <Folder name="Media Assets" defaultOpen>
+    <File name="background.png" icon="image" />
+    <File name="podcast.mp3" icon="audio" />
+    <File name="tutorial.mp4" icon="video" />
+    <File name="model_3d.obj" icon="3d" />
+  </Folder>
+  <Folder name="Documents">
+    <File name="report.pdf" icon="document" />
+    <File name="data_sheet.xlsx" icon="sheet" />
+    <File name="ssl_cert.crt" icon="certificate" />
+    <File name="private.key" icon="key" />
+  </Folder>
+  <Folder name="System & Others" defaultOpen>
+    <File name="backup.zip" icon="archive" />
+    <File name="scanner_output.pdf" icon="scan" />
+    <File name="unknown_file" icon="not-found" />
+    <File name="regular_note.txt" icon="normal" />
+  </Folder>
+</Files>
+
+## GitHub Card
+
+- **Location:** `src/components/GHCard/GitHubCard.astro`
+- **Import path:** `@shComponents/GHCard/GitHubCard.astro`
+- **Props:**
+  | Prop name | Type | Description |
+  | --- | --- | --- |
+  | `repo` | string | Specifies which GitHub repository to display, in the format `username/repository` or `https://github.com/username/repository`. |
+  | `class` | string | Additional CSS class for customizing GitHub card styles. |
+
+:::danger[Warning]
+To use the GitHub Card component, you must set a valid [GitHub Personal Access Token](https://github.com/settings/personal-access-tokens) in the `GITHUB_TOKEN` environment variable.
+:::
+
+Here is an example GitHub card showing how to use the `GithubCard` component to display repository information:
+
+```astro
+<GithubCard repo="510208/sh-blog-next" />
+```
+
+<GithubCard repo="510208/sh-blog-next" />
+
+Here is an archived repository:
+
+```astro
+<GithubCard repo="https://github.com/510208/MD5Hashing-NEW" />
+```
+
+<GithubCard repo="https://github.com/510208/MD5Hashing-NEW" />
+
+Here is a non-existent repository:
+
+```astro
+<GithubCard repo="https://github.com/510208/ThisRepoDoesNotExist" />
+```
+
+<GithubCard repo="https://github.com/510208/ThisRepoDoesNotExist" />
+
+## Tabs
+
+- **Location:**
+  - `src/components/post/Tab/Tabs.astro`
+  - `src/components/post/Tab/TabItem.astro`
+- **Import path:**
+  - `@shComponents/Tab/Tabs.astro`
+  - `@shComponents/Tab/TabItem.astro`
+- **Props:**
+  | Component | Prop name | Type | Description |
+  | --- | --- | --- | --- |
+  | `<Tabs />` | `class` | string | Additional CSS class for customizing tabs styles. |
+  | `<TabItem />` | `label` | string | Tab label displayed on the tab header. |
+  | `<TabItem />` | `class` | string | Additional CSS class for customizing tab item styles. |
+
+<Tabs>
+  <TabItem label="Javascript">
+
+    ```javascript
+    console.log("Hello World in Javascript");
+    ```
+
+  </TabItem>
+
+  <TabItem label="Rust">
+    
+    ```rust
+    fn main() {
+        println!("Hello World in Rust");
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Typescript">
+    
+    ```typescript
+    console.log("Hello World in Typescript");
+    ```
+
+  </TabItem>
+
+  <TabItem label="Python">
+    
+    ```python
+    print("Hello World in Python")
+    ```
+
+  </TabItem>
+
+  <TabItem label="Go" defaultOpen>
+    
+    ```go
+    package main
+
+    import "fmt"
+
+    func main() {
+        fmt.Println("Hello World in Go")
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="C++">
+    
+    ```cpp
+    #include <iostream>
+
+    int main() {
+        std::cout << "Hello World in C++" << std::endl;
+        return 0;
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Java">
+    
+    ```java
+    public class HelloWorld {
+        public static void main(String[] args) {
+            System.out.println("Hello World in Java");
+        }
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="C#">
+    
+    ```csharp
+    using System;
+
+    class Program {
+        static void Main() {
+            Console.WriteLine("Hello World in C#");
+        }
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="PHP">
+    
+    ```php
+    <?php
+    echo "Hello World in PHP";
+    ?>
+    ```
+
+  </TabItem>
+
+  <TabItem label="Ruby">
+    
+    ```ruby
+    puts "Hello World in Ruby"
+    ```
+
+  </TabItem>
+
+  <TabItem label="Swift">
+    
+    ```swift
+    print("Hello World in Swift")
+    ```
+
+  </TabItem>
+
+  <TabItem label="Kotlin">
+
+    ```kotlin
+      fun main() {
+        println("Hello World in Kotlin")
+      }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Dart">
+    
+    ```dart
+    void main() {
+      print("Hello World in Dart");
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Visual Basic">
+    
+    ```vb
+      Module Module1
+          Sub Main()
+              Console.WriteLine("Hello World")
+              Console.WriteLine("This is the first VB.Net Application.")
+              Console.ReadKey()
+          End Sub
+      End Module
+    ```
+
+  </TabItem>
+</Tabs>
+
+<Tabs>
+  <TabItem label="Javascript" defaultOpen>
+
+    ```javascript
+    console.log("Hello World in Javascript");
+    ```
+
+  </TabItem>
+
+  <TabItem label="Rust" defaultOpen>
+    
+    ```rust
+    fn main() {
+        println!("Hello World in Rust");
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Admonition Blocks
+
+> Admonition blocks are already integrated into the Markdown parser, so you can create them directly using Markdown syntax.
+
+```markdown
+:::note[Note]
+Highlights information that users should take into account, even when skimming.
+:::
+
+:::tip[Tip]
+Optional information to help a user be more successful.
+:::
+
+:::important[Important]
+Important information for a user to know.
+:::
+
+:::danger[Danger]
+Serious and/or dangerous situations.
+:::
+
+:::caution[Caution]
+Negative potential consequences of an action.
+:::
+```
+
+:::note[Note]
+Highlights information that users should take into account, even when skimming.
+:::
+
+:::tip[Tip]
+Optional information to help a user be more successful.
+:::
+
+:::important[Important]
+Important information for a user to know.
+:::
+
+:::danger[Danger]
+Serious and/or dangerous situations.
+:::
+
+:::caution[Caution]
+Negative potential consequences of an action.
+:::

@@ -1,0 +1,28 @@
+---
+import { cn } from "@lib/utils";
+
+interface Props {
+  start?: number; // Số thứ tự bắt đầu (mặc định là 1)
+  class?: string;
+}
+
+const { start = 1, class: className } = Astro.props;
+const counterStartValue = start - 1;
+---
+
+<div
+  class={cn(
+    "sh-builtin-components steps-container flex flex-col mb-6",
+    className,
+  )}
+  style={`--start-index: ${counterStartValue};`}
+>
+  <slot />
+</div>
+
+<style>
+  .steps-container {
+    /* Đã Việt hóa/Anh hóa: Thiết lập giá trị bắt đầu cho bộ đếm CSS */
+    counter-reset: step-counter var(--start-index);
+  }
+</style>

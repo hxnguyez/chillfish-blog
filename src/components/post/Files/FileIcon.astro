@@ -1,0 +1,76 @@
+---
+import { cn } from "@lib/utils";
+import { File as FileNormal } from "@lucide/astro";
+
+// filepath: FileIcon.astro
+import {
+  FileArchive,
+  FileBox,
+  FileBadge,
+  FileKey,
+  FileCodeCorner,
+  FileText,
+  FileSpreadsheet,
+  FileCog,
+  FileDigit,
+  FileTerminal,
+  FileQuestionMark,
+  FileScan,
+  FileMusic,
+  FileVideoCamera,
+  FileImage,
+} from "@lucide/astro";
+
+const FILE_ICON_OPTIONS = [
+  "normal",
+  "archive",
+  "3d",
+  "certificate",
+  "key",
+  "code",
+  "document",
+  "sheet",
+  "config",
+  "binary",
+  "terminal",
+  "not-found",
+  "scan",
+  "audio",
+  "video",
+  "image",
+] as const;
+
+type FileIconType = (typeof FILE_ICON_OPTIONS)[number];
+
+interface Props {
+  icon: FileIconType;
+  class?: string;
+}
+
+const iconMap: Record<FileIconType, any> = {
+  normal: FileNormal,
+  archive: FileArchive,
+  "3d": FileBox,
+  certificate: FileBadge,
+  key: FileKey,
+  code: FileCodeCorner,
+  document: FileText,
+  sheet: FileSpreadsheet,
+  config: FileCog,
+  binary: FileDigit,
+  terminal: FileTerminal,
+  "not-found": FileQuestionMark,
+  scan: FileScan,
+  audio: FileMusic,
+  video: FileVideoCamera,
+  image: FileImage,
+};
+
+const { icon, class: iconClass = "" } = Astro.props as Props;
+
+const SelectedIcon = iconMap[icon] || iconMap.normal;
+
+export type { FileIconType };
+---
+
+<SelectedIcon class={cn(iconClass, "sh-builtin-components")} />

@@ -1,0 +1,39 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="sh-builtin-components step-item group flex">
+  <div
+    class="mr-6 flex flex-col items-center rounded-full p-1 transition-colors duration-200 group-hover:bg-white/5 group-last:group-hover:bg-transparent"
+  >
+    <div
+      class="step-number z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#1A1A1A] text-sm font-semibold text-white transition-colors duration-200 group-hover:bg-white/20"
+    >
+      {/* Số thứ tự tự động hiện ở đây nhờ CSS Counter */}
+    </div>
+    <div class="h-full w-[1px] bg-white/20 group-last:hidden"></div>
+  </div>
+
+  <div class="min-h-20 !py-2">
+    <h4 class="text-xl leading-tight font-bold text-white">
+      {title}
+    </h4>
+    <div class="!mt-2 leading-relaxed text-gray-400">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .step-item {
+    counter-increment: step-counter;
+  }
+
+  .step-number::before {
+    content: counter(step-counter);
+  }
+</style>

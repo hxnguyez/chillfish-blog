@@ -1,0 +1,24 @@
+DirectoryPath: ./dist
+IgnoreDirs:
+  - .DS_Store
+  - .gitignore
+  - .htmltest.yml
+  - .prettier*
+  - .stylelintrc*
+  - .vscode
+  - astro.config.*
+  - /*.md
+  - /*.yml
+  - shblog.*
+  - node_modules
+CheckInternal: true
+CheckExternal: false
+CheckScripts: true
+CheckMeta: true
+CheckImages: false
+CheckFavicon: true
+
+IgnoreDirectoryMissingTrailingSlash: true
+IgnoreAltEmpty: true
+IgnoreURLs:
+  - ^https://gravatar\.com/.*

@@ -1,0 +1,91 @@
+---
+import "@/styles/global.css";
+import BaseHead from "@components/core/BaseHead.astro";
+import { SEPARATOR, SITE_TITLE } from "@/consts";
+import { Kbd, KbdGroup } from "@ui/kbd";
+import config from "@shConfig";
+import i18n from "@i18n/translation";
+import I18nKey from "@i18n/i18nKey";
+
+const locale = config.lang || "en";
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead
+      title={`${i18n(I18nKey.notfound_title)} ${SEPARATOR} ${SITE_TITLE}`}
+      description={i18n(I18nKey.notfound_description)}
+    />
+  </head>
+  <body>
+    <div class="flex min-h-screen w-screen flex-col bg-[#0078d7] px-4 pt-6 pb-32 sm:px-8 sm:pt-10 sm:pb-20 lg:px-50 lg:pt-27">
+      <div class="flex w-full flex-col items-start justify-start gap-0">
+        <h1 class="text-7xl font-normal sm:text-9xl lg:text-[200px]">
+          {Math.random() < 0.1 ? ":)" : ":("}
+        </h1>
+        <h2 class="mt-6 ml-1 text-xl font-thin sm:ml-2 sm:text-3xl lg:text-5xl/16 text-white">
+          {i18n(I18nKey.notfound_bsod_title_line_1)}<br />
+          {i18n(I18nKey.notfound_bsod_title_line_2)}
+        </h2>
+        <h2 id="progress" class="mt-4 ml-2 text-xl font-thin sm:mt-6 sm:ml-4 sm:text-3xl lg:text-5xl/16 text-white">
+          {i18n(I18nKey.notfound_finished_percent_description)} 0%
+        </h2>
+      </div>
+      
+      <div class="mt-4 ml-2 flex flex-col gap-4 sm:mt-6 sm:ml-4 sm:flex-row sm:gap-6">
+        <div class="flex h-24 w-24 shrink-0 justify-center bg-white p-2 sm:h-30 sm:w-30">
+          <img id="qr-image" src="/assets/layouts/404/404_qr.svg" class="m-auto" alt="QR Code" />
+        </div>
+        <div class="max-w-full text-sm font-light text-white sm:max-w-lg sm:text-base">
+          <p id="description">{i18n(I18nKey.notfound_please_go_back_normal)}</p>
+          <p class="mt-4 sm:mt-10">{i18n(I18nKey.notfound_bsod_description_1)}</p>
+          <p>{i18n(I18nKey.notfound_bsod_description_2)}</p>
+          <p id="failed-item" class="break-all">{i18n(I18nKey.notfound_bsod_failed_item)}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div id="info" hidden class="fixed bottom-4 left-1/2 max-w-[90vw] -translate-x-1/2 rounded-xl bg-blue-600/60 px-3 py-2 text-center text-sm sm:bottom-10 sm:left-4/9 sm:max-w-none sm:translate-x-0 sm:px-4 sm:text-left sm:text-base text-white">
+      {i18n(I18nKey.notfound_press_any_key_1)}
+      <KbdGroup><Kbd>{i18n(I18nKey.notfound_press_any_key_2)}</Kbd></KbdGroup>
+      {i18n(I18nKey.notfound_press_any_key_3)}
+    </div>
+  </body>
+</html>
+
+<script is:inline define:vars={{
+    notfound_finished_percent_description: i18n(I18nKey.notfound_finished_percent_description),
+    enable404EasterEgg: config.behavior.enable404EasterEgg,
+    i18n_normal: i18n(I18nKey.notfound_please_go_back_normal),
+    i18n_failed_item: i18n(I18nKey.notfound_bsod_failed_item)
+  }}>
+  const url = window.location.href;
+  let qr_img = "/assets/layouts/404/404_qr.svg";
+  let desc = i18n_normal || "For more information, please return to the homepage.";
+
+  // Cập nhật DOM
+  const qrImage = document.getElementById("qr-image");
+  const descriptionElement = document.getElementById("description");
+  const failedItemElement = document.getElementById("failed-item");
+  const infoElement = document.getElementById("info");
+
+  if (qrImage) qrImage.src = qr_img;
+  if (descriptionElement) descriptionElement.textContent = desc;
+  if (failedItemElement) failedItemElement.textContent = `${i18n_failed_item}${url.split('/').pop()}.lnk`;
+
+  let progress = 0;
+  const progressElement = document.getElementById("progress");
+  const interval = setInterval(() => {
+    if (progress < 100) {
+      progress += Math.floor(Math.random() * 15) + 1;
+      if (progress >= 100) {
+        progress = 100;
+        if (infoElement) infoElement.hidden = false;
+        clearInterval(interval);
+        document.addEventListener("keydown", () => window.location.href = "/");
+      }
+      if (progressElement) progressElement.textContent = `${notfound_finished_percent_description} ${progress}%`;
+    }
+  }, 800);
+</script>

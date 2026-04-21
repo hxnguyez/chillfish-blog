@@ -1,0 +1,45 @@
+---
+import { getCollection } from "astro:content";
+import BlogListClient from "./BlogListClient.tsx";
+import config from "@shConfig";
+
+// NHẬN DỮ LIỆU TỪ PROPS
+interface Props {
+  posts?: any[];
+  collection?: "blog" | "lab";
+}
+
+const { posts: propsPosts, collection = "blog" } = Astro.props;
+
+const postsPerPage = config.style.postsPerPage || 6;
+
+// Nếu có posts truyền vào thì dùng luôn, không thì mới đi quét collection mặc định
+const allPosts = propsPosts || (
+  await getCollection(collection as any, ({ data }: any) => {
+    if (import.meta.env.DEV) return true;
+    return data.draft !== true;
+  })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Chuyển đổi dữ liệu sang định dạng mà React (Client) hiểu được
+const serializedPosts = allPosts.map((post: any) => ({
+  id: post.id,
+  data: {
+    title: post.data.title,
+    description: post.data.description,
+    // Đảm bảo xử lý cả Date object lẫn ISO string
+    pubDate: post.data.pubDate instanceof Date 
+      ? post.data.pubDate.toISOString() 
+      : post.data.pubDate,
+    heroImage: post.data.heroImage ? { src: post.data.heroImage.src } : null,
+    category: post.data.category ?? null,
+    tags: post.data.tags ?? null,
+  },
+}));
+---
+
+<BlogListClient
+  client:load
+  posts={serializedPosts}
+  postsPerPage={postsPerPage}
+/>

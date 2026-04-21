@@ -1,0 +1,44 @@
+---
+import { Button } from "@ui/button.tsx";
+import { ArrowUp } from "lucide-react";
+
+const { class: className } = Astro.props;
+---
+
+<Button
+  id="to-top-button"
+  aria-label="Back to top"
+  variant={"ghost"}
+  className={`invisible flex items-center justify-center rounded-lg opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 data-[show=true]:visible data-[show=true]:opacity-100 ${className}`}
+>
+  <ArrowUp className="text-white lg:rotate-90" size={20} />
+  <span class="ml-4 hidden text-xs tracking-[0.3em] uppercase lg:block"
+    >Back to top</span
+  >
+  <div class="ml-2 hidden h-px w-10 bg-gray-300/50 lg:block"></div>
+</Button>
+
+<script>
+  function initToTop() {
+    const scrollToTopBtn = document.getElementById("to-top-button");
+    if (!scrollToTopBtn) return;
+
+    const handleScroll = () => {
+      // Tăng độ nhạy: Chỉ cần cuộn 200px là hiện
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      scrollToTopBtn.setAttribute("data-show", scrollTop > 200 ? "true" : "false");
+    };
+
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: "auto" }); // Đổi sang auto cho nhẹ máy
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    scrollToTopBtn.addEventListener("click", scrollToTop);
+    handleScroll();
+  }
+
+  // Tương thích cho cả khi có hoặc không có ClientRouter
+  document.addEventListener("DOMContentLoaded", initToTop);
+  document.addEventListener("astro:page-load", initToTop);
+</script>

@@ -1,0 +1,193 @@
+---
+import "@/styles/markdown.css";
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/content/FormattedDate.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseMainContent from "@/layouts/BaseMainContent.astro";
+import Hero from "@components/content/Home/Hero.astro";
+import { HeroTitle, HeroSubtitle } from "@components/content/Home/HeroItems";
+
+// @ts-ignore
+import Sidebar from "@components/Sidebar.astro";
+
+import { CalendarDays, Tag, User } from "lucide-react";
+import config from "@shConfig";
+import { Separator } from "@components/ui/separator";
+import { DEFAULT_POST_IMAGE, SEPARATOR } from "@consts";
+
+import "@/styles/aside.css";
+
+import Toc from "@components/Toc.astro";
+import "katex/dist/katex.min.css";
+import Comment from "@components/comment/Comment.astro";
+import Tags from "@components/Tags.astro";
+
+import i18n from "@i18n/translation";
+import I18nKey from "@i18n/i18nKey";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: any;
+  headings: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+  tags?: CollectionEntry<"blog">["data"]["tags"];
+}
+
+const { title, description, pubDate, updatedDate, heroImage, headings, tags } = Astro.props;
+---
+
+<BaseLayout
+  title={`${title} ${SEPARATOR} ${config.title}`}
+  description={description}
+  coverImage={heroImage}
+>
+  {/* Hero Section */}
+  <Hero backgroundImage={heroImage || DEFAULT_POST_IMAGE}>
+    <div class="lg:col-span-2" slot="left">
+      <HeroTitle>{title}</HeroTitle>
+      <HeroSubtitle slot="right">
+        {description}
+      </HeroSubtitle>
+    </div>
+  </Hero>
+
+  <BaseMainContent>
+    {/* Main Content Column */}
+    <article data-pagefind-body class="w-full max-w-full min-w-0 flex-1">
+      <div>
+        {/* Post Metadata */}
+        <div class="mb-4 flex flex-wrap gap-y-2 gap-x-4" data-pagefind-ignore>
+          {/* Publication Date */}
+          <time
+            class="flex items-center gap-1 text-sm text-gray-500"
+            data-pagefind-meta={`date:{${pubDate.toISOString().split("T")[0]}}`}
+          >
+            <CalendarDays size={18} />
+            {i18n(I18nKey.post_released)} 
+            <FormattedDate date={pubDate} />
+            {updatedDate && (
+              <>
+                <Separator orientation="vertical" className="h-4" />
+                {i18n(I18nKey.post_last_edited)} 
+                <FormattedDate date={updatedDate} />
+              </>
+            )}
+          </time>
+          
+          <Separator orientation="vertical" className="hidden h-4 md:block" />
+          
+          {/* Author */}
+          <div class="flex items-center gap-1 text-sm text-gray-500">
+            <User size={18} />
+            {i18n(I18nKey.post_author)} 
+            <span data-pagefind-filter="author" class="font-medium text-gray-300">{config.author.name}</span>
+          </div>
+        </div>
+
+        {/* Tags Section */}
+        {tags && tags.length > 0 && (
+          <div class="mb-6 flex items-center gap-2" data-pagefind-ignore>
+            <Tag size={18} class="text-gray-500" />
+            <span class="text-sm text-gray-500">{i18n(I18nKey.post_tags)}:</span>
+            <Tags tags={tags} />
+          </div>
+        )}
+      </div>
+
+      {/* Hero Cover Image */}
+      <div class="overflow-hidden rounded-xl border border-white/5 shadow-2xl">
+        <Image
+          width={1020}
+          height={574}
+          src={heroImage || DEFAULT_POST_IMAGE}
+          alt={title}
+          decoding="async"
+          loading="eager" 
+          class="w-full object-cover transition-transform duration-500 hover:scale-105"
+          data-pagefind-meta="image[src], image_alt[alt]"
+        />
+      </div>
+
+      {/* Main Post Content */}
+      <div class="mt-10 markdown-body prose prose-invert max-w-none" id="post-content">
+        <slot />
+      </div>
+
+      <div class="mt-16 border-t border-white/10 pt-10">
+        <Comment />
+      </div>
+    </article>
+
+    {/* Sidebar for TOC and Widgets */}
+    <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
+      <div class="sticky top-24 space-y-8">
+        <Sidebar />
+        {headings?.length > 0 && config.behavior.tableOfContents.enable && (
+          <Toc {headings} />
+        )}
+      </div>
+    </aside>
+  </BaseMainContent>
+</BaseLayout>
+
+<script>
+  // Optimized Copy Code Logic
+  const initCopyButtons = () => {
+    document.addEventListener("click", (e) => {
+      const target = e.target as Element | null;
+      if (target && target.classList.contains("copy-btn")) {
+        const preEle = target.closest("pre");
+        const codeEle = preEle?.querySelector("code");
+        if (!codeEle) return;
+
+        const code = Array.from(codeEle.querySelectorAll(".code:not(summary *)"))
+          .map((el) => el.textContent)
+          .map((t) => (t === "\n" ? "" : t))
+          .join("\n");
+        
+        navigator.clipboard.writeText(code).then(() => {
+          target.classList.add("success");
+          
+          const oldTimeout = target.getAttribute("data-timeout-id");
+          if (oldTimeout) clearTimeout(parseInt(oldTimeout));
+
+          const timeoutId = setTimeout(() => {
+            target.classList.remove("success");
+          }, 2000);
+          
+          target.setAttribute("data-timeout-id", timeoutId.toString());
+        });
+      }
+    });
+  };
+
+  document.addEventListener("astro:page-load", initCopyButtons);
+</script>
+
+<script>
+  import mediumZoom from "medium-zoom";
+
+  let zoom: any = null;
+
+  const attachMediumZoom = () => {
+    if (zoom) zoom.detach();
+    zoom = mediumZoom("[data-zoomable]", {
+      margin: 24,
+      background: "rgba(0, 0, 0, 0.9)",
+      scrollOffset: 0, // Tối ưu để không bị giật khi cuộn
+    });
+  };
+
+  document.addEventListener("astro:page-load", attachMediumZoom);
+  document.addEventListener("astro:before-swap", () => zoom?.detach());
+  
+  // Khởi tạo lần đầu
+  attachMediumZoom();
+</script>

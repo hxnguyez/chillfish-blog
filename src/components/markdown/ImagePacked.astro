@@ -1,0 +1,30 @@
+---
+import { Image as AstroImage } from "astro:assets";
+
+interface Props {
+  src: string;
+  alt?: string;
+  title?: string;
+  [key: string]: any;
+}
+
+const { src, alt = "", title, ...rest } = Astro.props;
+
+// Tối ưu: Mặc định ảnh lớn nhưng dùng loading lazy để không lag khi cuộn bài viết
+const width = rest.width || 1200;
+const height = rest.height || 675;
+---
+
+<AstroImage
+  {src}
+  alt={alt}
+  width={width}
+  height={height}
+  title={title}
+  {...rest}
+  class="border rounded-lg mx-auto"
+  loading="lazy"
+  decoding="async"
+  data-zoomable
+  data-zoom-src={src}
+/>

@@ -1,0 +1,28 @@
+---
+import FileIcon from "./FileIcon.astro";
+import type { FileIconType } from "./FileIcon.astro";
+
+import { cn } from "@/lib/utils";
+
+interface Props {
+  name: string;
+  icon?: FileIconType;
+  highlighted?: boolean;
+}
+
+const { name, icon = "normal", highlighted = false } = Astro.props;
+---
+
+<div
+  class={cn(
+    "sh-builtin-components flex items-center py-1 hover:text-white transition-colors cursor-default px-2",
+    highlighted &&
+      "bg-green-500/10 rounded border border-green-400/20 is-highlighted my-1",
+  )}
+>
+  <div class="mr-1 w-2"></div>
+
+  <FileIcon class="mr-2 h-5 w-5 text-gray-500" icon={icon} />
+
+  <span>{name}</span>
+</div>

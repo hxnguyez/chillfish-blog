@@ -1,0 +1,141 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/consts";
+import Hero from "@components/content/Home/Hero.astro";
+import { HeroTitle, HeroSubtitle } from "@components/content/Home/HeroItems";
+import BaseMainContent from "@/layouts/BaseMainContent.astro";
+import Sidebar from "@components/Sidebar.astro";
+import TimelineSinglePost from "@ui/timeline/TimelineSinglePost.astro";
+import I18nKey from "@i18n/i18nKey";
+import i18n from "@i18n/translation";
+import config from "@shConfig";
+
+const posts = (
+  await getCollection("blog", ({ data }) => {
+    if (import.meta.env.DEV) return true;
+    return data.draft !== true;
+  })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const postsByYear = posts.reduce((acc: any, post: any) => {
+  const year = new Date(post.data.pubDate).getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+---
+
+<BaseLayout
+  title={`${config.pages.blog.title} - ${SITE_TITLE}`}
+  description={SITE_DESCRIPTION}
+>
+  <Hero heroImage={config.pages.blog.heroImage}>
+    <div class="lg:col-span-2" slot="left">
+      <HeroTitle>
+        <span class="whitespace-pre-line">{config.pages.blog.title}</span>
+      </HeroTitle>
+      <HeroSubtitle slot="right">
+        <span class="whitespace-pre-line">{config.pages.blog.subTitle}</span>
+      </HeroSubtitle>
+    </div>
+  </Hero>
+
+  <BaseMainContent>
+    <div class="flex-1">
+      <div class="space-y-8" id="timeline-container">
+        {
+          years.map((year) => {
+            const yearPosts = postsByYear[year];
+            return (
+              <div class="year-group relative">
+                <div class="mb-6 flex items-center gap-4">
+                  <h2 class="text-4xl font-bold text-gray-900 dark:text-white">{year}</h2>
+                  <div class="flex items-center gap-2">
+                    <div class="h-3 w-3 rounded-full bg-green-500" />
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      {yearPosts.length}{" "}
+                      {yearPosts.length === 1
+                        ? i18n(I18nKey.posts_timeline_year_post_count_single)
+                        : i18n(I18nKey.posts_timeline_year_post_count_plural)}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="relative border-l-2 border-gray-200 pl-8 dark:border-gray-700">
+                  {yearPosts.map((post: any) => {
+                    // Tối ưu: Đổi định dạng ngày sang quốc tế (MM-DD)
+                    const month = new Date(post.data.pubDate)
+                      .toLocaleDateString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
+                      .replace("/", "-");
+                    const postTags = post.data.tags || [];
+
+                    return (
+                      <div class="group timeline-item relative mb-8" style="display: none;">
+                        <div class="absolute top-1 -left-9.75 h-3 w-3 rounded-full bg-gray-400 transition-colors group-hover:bg-green-500 dark:bg-gray-600" />
+                        <div class="mb-2 text-sm text-gray-500 dark:text-gray-400">{month}</div>
+                        <TimelineSinglePost postData={post} postTags={postTags} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+
+      <div id="sentinel" class="mt-8 flex h-20 items-center justify-center">
+        <div class="hidden h-8 w-8 animate-spin rounded-full border-b-2 border-green-500" id="loading-spinner"></div>
+      </div>
+    </div>
+
+    <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
+      <Sidebar />
+    </aside>
+  </BaseMainContent>
+</BaseLayout>
+
+<script>
+  function initLazyLoad() {
+    const items = document.querySelectorAll(".timeline-item");
+    const itemsPerPage = 10;
+    let visibleCount = 0;
+    const sentinel = document.getElementById("sentinel");
+    const spinner = document.getElementById("loading-spinner");
+
+    const showNextBatch = () => {
+      const nextCount = visibleCount + itemsPerPage;
+      let newlyShown = 0;
+      for (let i = visibleCount; i < nextCount && i < items.length; i++) {
+        (items[i] as HTMLElement).style.display = "block";
+        newlyShown++;
+      }
+      visibleCount += newlyShown;
+      if (visibleCount >= items.length && sentinel) sentinel.style.display = "none";
+    };
+
+    showNextBatch();
+
+    if (sentinel && items.length > visibleCount) {
+      const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            spinner?.classList.remove("hidden");
+            setTimeout(() => {
+              showNextBatch();
+              spinner?.classList.add("hidden");
+            }, 200);
+          }
+        }, { rootMargin: "200px" });
+      observer.observe(sentinel);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initLazyLoad);
+  document.addEventListener("astro:page-load", initLazyLoad);
+</script>

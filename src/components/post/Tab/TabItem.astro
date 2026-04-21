@@ -1,0 +1,22 @@
+---
+import { cn } from "@/lib/utils";
+
+interface Props {
+  label: string; // 改為接收 label
+  class?: string;
+  defaultOpen?: boolean; // 增加一個標記，用於初始化顯示
+}
+
+const { label, class: className, defaultOpen = false } = Astro.props;
+---
+
+<div
+  class={cn(
+    "sh-builtin-components tab-panel animate-in fade-in duration-300",
+    className,
+  )}
+  data-label={label}
+  data-default-open={defaultOpen ? "true" : "false"}
+>
+  <slot />
+</div>

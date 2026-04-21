@@ -1,0 +1,43 @@
+---
+import { cn } from "@lib/utils";
+import { Folder as FolderIcon } from "@lucide/astro";
+
+interface Props {
+  class?: string;
+  path?: string;
+}
+const { class: className, path } = Astro.props;
+---
+
+<div
+  class={cn(
+    "sh-builtin-components mb-4 relative file-tree-container font-mono text-sm border border-white/10 rounded-lg bg-[#0F0F0F] overflow-hidden",
+    className,
+  )}
+>
+  <FolderIcon
+    class="absolute right-2 bottom-2 h-4 w-4 text-gray-500 opacity-20"
+    stroke-width={4}
+    size={48}
+  />
+
+  {
+    path && (
+      <div
+        class="flex items-center justify-start gap-2 border-b border-white/10 px-5 py-3 select-none"
+        title={path}
+      >
+        <FolderIcon size={18} class="text-gray-500" />
+        <span class="text-sm text-gray-400">{path}</span>
+      </div>
+    )
+  }
+  <div class={cn("px-5", path ? "pb-5 pt-2" : "py-5")}>
+    <slot />
+  </div>
+</div>
+
+<script is:inline>
+  // Giữ nguyên logic JS vì nó xử lý animation đóng mở khá tốt.
+  // Đã kiểm tra: Không có tiếng Trung trong script.
+</script>

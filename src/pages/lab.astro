@@ -1,0 +1,76 @@
+---
+import { getCollection } from "astro:content";
+import BlogList from "@components/content/BlogList.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@components/content/Home/Hero.astro";
+import Sidebar from "@components/Sidebar.astro";
+import BaseMainContent from "@/layouts/BaseMainContent.astro";
+import { HeroSubtitle, HeroTitle } from "@components/content/Home/HeroItems";
+import config from "@shConfig";
+
+// 1. Lấy dữ liệu từ "kho" LAB thay vì Blog
+const labPosts = (
+  await getCollection("lab") // Không truyền thêm hàm filter nào ở đây
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Lấy bài nghiên cứu mới nhất để ghim lên Banner bên phải (nếu muốn)
+const featuredLab = labPosts[0];
+const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
+const { title, subTitle, heroImage } = config.pages.other.projects;
+---
+
+<BaseLayout
+  title={title}
+  description={subTitle}
+  coverImage={heroImage}
+>
+  <Hero>
+    <div class="lg:col-span-2" slot="left">
+      <HeroTitle>
+        <span class="whitespace-pre-line">{title}</span>
+      </HeroTitle>
+      <HeroSubtitle slot="right">
+        {subTitle}
+      </HeroSubtitle>
+    </div>
+
+    {
+      featuredLab && (
+        <div class="flex flex-col items-end justify-end gap-5" slot="right">
+          <a
+            href={`/lab/${featuredLab.id}/`}
+            class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
+            style={{
+              backgroundImage: featuredLab.data.heroImage
+                ? `url(${featuredLab.data.heroImage.src})`
+                : config.style.defaultPostImage,
+              backgroundSize: "cover",
+              backgroundBlendMode: "darken",
+            }}
+          >
+            <p class="mb-2.5 text-xl tracking-[4px] text-white/60">
+              LATEST RESEARCH
+            </p>
+            <h2 class="text-2xl font-bold text-white transition-colors group-hover:text-white/90">
+              {featuredLab.data.title}
+            </h2>
+          </a>
+        </div>
+      )
+    }
+  </Hero>
+
+  <BaseMainContent>
+    <div class="flex-1" data-pagefind-body transition:name="main-content">
+      {/* LƯU Ý: Nếu Component BlogList của bạn bị fix cứng chỉ lấy bài từ 'blog', 
+          bạn có thể cần tạo một bản sao hoặc truyền props collection="lab".
+          Nhưng thường thì nó sẽ lấy từ prop posts.
+      */}
+      <BlogList posts={labPosts} collection="lab" />
+    </div>
+
+    <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
+      <Sidebar />
+    </aside>
+  </BaseMainContent>
+</BaseLayout>

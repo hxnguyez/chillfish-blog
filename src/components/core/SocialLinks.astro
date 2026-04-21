@@ -1,0 +1,67 @@
+---
+import { Button } from "@ui/button.tsx";
+import config from "@shConfig";
+
+const isImageUrl = (str: string): boolean => {
+  return /^\/.*\.(png|jpg|jpeg|gif|svg|webp)$/i.test(str);
+};
+
+type LinkItem = (typeof config.footer.links)[number];
+
+const resolvedLinks = config.footer.links.map((link: LinkItem) => {
+  const { socialMedia } = link;
+
+  if (typeof socialMedia === "string") {
+    if (isImageUrl(socialMedia)) {
+      return {
+        ...link,
+        kind: "image" as const,
+        src: socialMedia,
+        IconComponent: null,
+      };
+    }
+
+    return {
+      ...link,
+      kind: "image" as const,
+      src: socialMedia,
+      IconComponent: null,
+    };
+  }
+
+  return {
+    ...link,
+    kind: "icon" as const,
+    src: "",
+    IconComponent: socialMedia,
+  };
+});
+---
+
+<div class="flex flex-wrap items-center justify-start gap-4 md:justify-end">
+  {
+    resolvedLinks.map(({ socialMedia, url, kind, src, IconComponent }) => (
+      <Button asChild>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={
+            typeof socialMedia === "string" ? socialMedia : "social link"
+          }
+          class="h-6 w-6 text-white"
+        >
+          {kind === "image" ? (
+            <img
+              src={src}
+              alt=""
+              class="h-6 w-6 object-contain transition-all hover:opacity-80"
+            />
+          ) : IconComponent ? (
+            <IconComponent class="h-6 w-6 transition-all hover:opacity-80" />
+          ) : null}
+        </a>
+      </Button>
+    ))
+  }
+</div>

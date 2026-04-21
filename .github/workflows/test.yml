@@ -1,0 +1,45 @@
+name: Testing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  astro-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: true # 自動執行 install 並處理快取
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest # Specify your version (e.g., 18, 20, 22, or 'lts/*')
+          cache: "pnpm"
+      - name: Run Astro tests
+        run: pnpm astro check
+
+  # broken-link-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 10
+  #         run_install: true # 自動執行 install 並處理快取
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: latest # Specify your version (e.g., 18, 20, 22, or 'lts/*')
+  #         cache: "pnpm"
+  #     - name: Build the site
+  #       run: pnpm astro build
+  #     - name: Run htmltest
+  #       uses: wjdp/htmltest-action@master
+  #       with:
+  #         config: .htmltest.yml

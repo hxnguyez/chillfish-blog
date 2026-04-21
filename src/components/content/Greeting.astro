@@ -1,0 +1,32 @@
+---
+import type { TimeGreeting } from "../../types/shblog.config";
+import config from "@shConfig";
+
+const hour = new Date().getHours();
+const TIME_GREETING: TimeGreeting[] = config.pages.home.greetings;
+
+const normalizeHour = (h: number | undefined) => (h === 24 ? 0 : h);
+
+const greeting =
+  TIME_GREETING.find((item) => {
+    const begin = normalizeHour(item.begin);
+    const finish = normalizeHour(item.finish);
+
+    if (begin !== undefined && finish !== undefined) {
+      if (begin > finish) {
+        return hour >= begin || hour < finish;
+      }
+      return hour >= begin && hour < finish;
+    }
+    if (begin !== undefined && finish === undefined) {
+      return hour === begin;
+    }
+    return false;
+  })?.text ||
+  TIME_GREETING.find(
+    (item) => item.begin === undefined && item.finish === undefined,
+  )?.text ||
+  "Hello!"; // Tối ưu: Thay "你好!" thành "Hello!" hoặc câu chào bạn thích
+---
+
+{greeting}

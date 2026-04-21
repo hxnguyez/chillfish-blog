@@ -22,3 +22,16 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+wrangler.jsonc
+
+# Frontmatter CMS
+.frontmatter/database/
+.frontmatter/*
+.vscode/settings.json
+
+# CloudFlare Wrangler
+.wrangler/*
+
+public/_headers
+
+public/pagefind/*

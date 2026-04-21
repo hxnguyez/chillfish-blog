@@ -1,0 +1,29 @@
+---
+const { code, language } = Astro.props;
+---
+
+<div class="code-block group relative">
+  <div class="code-header flex justify-between items-center bg-[#2d2d2d] px-4 py-1.5">
+    <span class="language-badge text-xs uppercase tracking-wider text-neutral-400 font-mono">
+      {language || "text"}
+    </span>
+  </div>
+  <pre class="overflow-x-auto p-4 bg-[#1e1e1e]">
+    <code class={`language-${language || 'text'} text-sm leading-relaxed`}>
+      <slot />
+    </code>
+  </pre>
+</div>
+
+<style>
+  .code-block {
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  code {
+    font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace;
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+import Layout from "../layouts/BlogPost.astro";
+import config from "@shConfig";
+---
+
+<Layout
+  title={config.pages.other.about.title}
+  description={config.pages.other.about.subTitle}
+  pubDate={new Date("April 22 2026")}
+  heroImage={config.pages.other.about.heroImage}
+  headings={[]}
+>
+  <div class="mb-16">
+    <h2 class="mb-4 text-2xl font-bold">whoami</h2>
+    <p class="content-text">
+      Hi there! I'm Hung Nguyen (chillfish) - a student at 
+      FPT University majoring in Information Assurance。 
+      Currently, I am focusing on 
+      <span class="italic text-blue-400">Binary Exploitation</span> and <span class="italic text-red-400">Reverse Engineering</span>。
+    </p>
+    <p class="content-text">
+         The reason I chose the nickname <span class="font-bold italic">chillfish</span> is simple: I like the way of chill swimming through the vast ocean of knowledge - even when that ocean is filled with complex machine code and heap structures。I find joy in the process of unraveling the mysteries hidden within binaries, and I hope to share that joy with others through this blog。
+    </p>
+    <p class="content-text">
+         My current toolkit includes <span class="italic text-yellow-500">Python</span> for scripting, 
+      <span class="italic text-green-500">GDB (with GEF)</span> for debugging vulnerabilities, and a robust environment running on <span class="italic text-blue-500">WSL2/Linux</span>。If you are a fellow CTFer or interested in the Pwnable world, feel free to reach out - let's pwn some binaries together! 
+    </p>
+  </div>
+
+  <div class="mb-16">
+    <h2 class="mb-4 text-2xl font-bold">About this site</h2>
+    <p class="content-text">
+      This blog is built using the <a href="https://astro.build/">Astro</a> framework。It serves as my personal digital archive for CTF Write-ups, security reports (found in the Lab section), and general tech thoughts。
+    </p>
+    <p class="content-text">
+      My goal for this site is to maintain a technical diary where every post dives deep into the core essence of the problem rather than just scratching the surface。I hope the insights shared here prove useful to anyone else navigating the path to becoming a Security Researcher。
+    </p>
+  </div>
+</Layout>

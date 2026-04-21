@@ -1,0 +1,84 @@
+---
+import {
+  Folder as FolderIcon,
+  FolderOpen as FolderOpenIcon,
+  ChevronRight,
+} from "@lucide/astro";
+
+import { cn } from "@/lib/utils";
+
+interface Props {
+  name: string;
+  defaultOpen?: boolean;
+  highlighted?: boolean;
+}
+const { name, defaultOpen = false, highlighted = false } = Astro.props;
+// 產生唯一 ID 以供腳本控管
+const folderId = `folder-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div
+  class={cn(
+    "sh-builtin-components folder-root select-none",
+    highlighted &&
+      "bg-green-500/10 rounded border border-green-400/20 my-1 is-highlighted",
+  )}
+>
+  <button
+    type="button"
+    class="folder-trigger flex w-full items-center py-1.5 text-left transition-colors hover:text-white"
+    data-target={folderId}
+    aria-expanded={defaultOpen ? "true" : "false"}
+  >
+    <ChevronRight
+      class="mr-1 h-4 w-4 text-gray-600 transition-transform duration-300"
+      style={defaultOpen ? "transform: rotate(90deg)" : ""}
+    />
+
+    <div class="relative mr-2 h-5 w-5">
+      <FolderIcon
+        class="folder-icon-close absolute h-5 w-5 text-neutral-400 transition-opacity duration-300"
+        style={defaultOpen ? "opacity: 0" : "opacity: 1"}
+      />
+      <FolderOpenIcon
+        class="folder-icon-open absolute h-5 w-5 text-green-400 transition-opacity duration-300"
+        style={defaultOpen ? "opacity: 1" : "opacity: 0"}
+      />
+    </div>
+
+    <span class="font-medium text-gray-300">{name}</span>
+
+    <div
+      class="parent-highlight-indicator ml-2 hidden h-1.5 w-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+    >
+    </div>
+  </button>
+
+  <div
+    id={folderId}
+    class="folder-content overflow-hidden transition-[max-height] duration-300 ease-in-out"
+    style={defaultOpen ? "max-height: 1000px;" : "max-height: 0px;"}
+    hidden={!defaultOpen}
+  >
+    <div class="ml-[7px] border-l border-white/10 pl-4">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .folder-trigger {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* 核心邏輯：如果 folder-root 內部的 folder-content 包含任何被高亮的元素 */
+  /* 則顯示該層級 trigger 內的綠點 */
+  .folder-root:has(.folder-content .is-highlighted)
+    > .folder-trigger
+    .parent-highlight-indicator {
+    display: block;
+  }
+</style>

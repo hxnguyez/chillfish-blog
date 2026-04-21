@@ -1,0 +1,117 @@
+---
+// src/components/GitHubCard.astro
+import { cn } from "@lib/utils";
+import { Star, GitFork, SearchAlert, Circle } from "@lucide/astro";
+import { Github } from "simple-icons-astro";
+import I18nKey from "@i18n/i18nKey";
+import i18n from "@i18n/translation";
+
+import { fetchRepoData } from "@lib/githubCache";
+import GitHubStatusBadge from "./GitHubStatusBadge.astro";
+
+// 匯入第一層：常用語言白名單 (靜態匯入)
+import { commonLangColors } from "./commonColors";
+
+interface Props {
+  repo: `${string}/${string}` | `https://github.com/${string}/${string}`;
+  class?: string;
+}
+
+const { repo, class: className } = Astro.props;
+const token = import.meta.env.GITHUB_TOKEN;
+
+if (!token) {
+  throw new Error("GitHub token is required for GitHubCard component.");
+}
+
+const data = await fetchRepoData(repo);
+
+// --- 語言顏色處理邏輯 ---
+let langColor = "#9198a1"; // 預設灰色
+
+if (data?.language) {
+  // 1. 先從白名單尋找
+  if (commonLangColors[data.language]) {
+    langColor = commonLangColors[data.language];
+  } else {
+    // 2. 沒命中，動態引入完整 65KB 檔案
+    // Vite 會將此 import 處理為非同步加載，不會阻塞主束
+    try {
+      const fullColorsModule = await import("./colors");
+      const fullColors = fullColorsModule.programLanguagesToColorChart;
+      langColor = fullColors[data.language]?.color ?? "#9198a1";
+    } catch (e) {
+      console.error("Failed to load full color chart", e);
+    }
+  }
+}
+---
+
+{
+  data ? (
+    <a
+      href={data.html_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={cn(
+        "sh-builtin-components group mb-4 block rounded-lg border border-white/10 bg-neutral-900 px-5 py-5 no-underline transition-all duration-300 hover:border-white/30 hover:bg-neutral-800",
+        className,
+      )}
+    >
+      <div class="mb-3 flex items-start justify-between">
+        <div class="flex items-center gap-2">
+          <Github class="h-5 w-5 text-gray-400" />
+          <span class="text-lg font-semibold text-green-400 transition-colors duration-300 group-hover:text-green-500">
+            {data.name}
+          </span>
+        </div>
+
+        <div class="ml-auto">
+          <GitHubStatusBadge gitHubData={data} />
+        </div>
+      </div>
+
+      <p class="mb-4 line-clamp-2 text-base leading-relaxed text-gray-400">
+        {data.description || i18n(I18nKey.github_card_no_description)}
+      </p>
+
+      <div class="flex items-center gap-4 text-xs text-gray-500">
+        {data.language && (
+          <div class="flex items-center gap-1.5">
+            <Circle class="h-3 w-3" fill={langColor} stroke="none" />
+            <span class="transition-colors hover:text-blue-500">
+              {data.language}
+            </span>
+          </div>
+        )}
+
+        <div class="flex items-center gap-1 transition-colors hover:text-yellow-500">
+          <Star class="h-4 w-4" />
+          <span>{data.stargazers_count.toLocaleString()}</span>
+        </div>
+
+        <div class="flex items-center gap-1 transition-colors hover:text-blue-500">
+          <GitFork class="h-4 w-4" />
+          <span>{data.forks_count.toLocaleString()}</span>
+        </div>
+
+        <div class="ml-auto hidden italic sm:block">
+          {i18n(I18nKey.github_card_updated_at)}
+          {new Date(data.updated_at).toLocaleDateString()}
+        </div>
+      </div>
+    </a>
+  ) : (
+    <div
+      class={cn(
+        "sh-builtin-components flex min-h-35 flex-col items-center justify-center gap-2 rounded-lg border border-red-50/10 bg-red-950 px-5 py-5 text-center text-red-500 transition-all duration-300 hover:border-red-50/30 hover:bg-red-900/90",
+        className,
+      )}
+    >
+      <div class="sh-builtin-components flex size-8 items-center justify-center rounded-lg border border-red-500/80 bg-red-800/50">
+        <SearchAlert size={20} />
+      </div>
+      {i18n(I18nKey.github_card_not_found)}
+    </div>
+  )
+}

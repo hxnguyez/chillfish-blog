@@ -1,0 +1,57 @@
+---
+import SocialLinks from "./SocialLinks.astro";
+import config from "@shConfig";
+
+let year: number | null = null;
+if (config.footer.copyright.yearUpdateStrategy === "fixed") {
+  year = new Date().getFullYear();
+} else if (typeof config.footer.copyright.yearUpdateStrategy === "number") {
+  year = config.footer.copyright.yearUpdateStrategy;
+}
+---
+
+<footer class="relative lg:h-[350px] py-0 lg:py-10 lg:px-4 overflow-hidden flex justify-center">
+  {/* Nền Gradient */}
+  <div class="absolute inset-0 pointer-events-none">
+    <img src="/assets/layouts/footer/footer_background_gradient.webp" alt="" class="w-full h-full object-cover" />
+  </div>
+
+  <div class="relative backdrop-blur-sm bg-white/5 border-0 lg:border border-white/10 rounded-none lg:rounded-[20px] p-6 md:p-10 h-full overflow-auto w-full max-w-[1278px]">
+    <div class="flex flex-col md:flex-row md:justify-between gap-8 h-full">
+      
+      {/* Cột trái: Thông tin Blog */}
+      <div class="w-full md:w-[567px]">
+        <h3 class="text-white font-display text-xl font-black">{config.title}</h3>
+        <div class="h-px bg-white/20 w-full md:w-[260px] my-4"></div>
+        <div class="text-white/60 text-sm leading-6 tracking-[0.7px] mb-6 whitespace-pre-line">
+          {config.footer.description}
+        </div>
+        {/* SiteRuntime đã bị xóa tại đây */}
+      </div>
+
+      {/* Cột phải: Liên hệ & Bản quyền */}
+      <div class="w-full md:w-[567px] flex flex-col justify-between text-left md:text-right gap-6">
+        <div class="space-y-2">
+          <p class="text-white/80 text-sm leading-normal">
+            Non-commercial use is welcomed. Please credit the author and source link.
+            <br /> For collaborations, contact: 
+            <span class="underline ml-1">{config.author.email}</span>
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="text-white/50 text-[10px] leading-normal uppercase tracking-wider">
+            <p>
+              <a href="/" class="underline hover:text-white/80 transition-colors">{config.title}</a>
+              © <span class="sh-footer-year">{year || ""}</span> {config.author.name}
+            </p>
+            <p class="mt-1">
+               Licensed under <a href={config.footer.copyright.url || "#"} class="underline">{config.footer.copyright.text}</a>
+            </p>
+          </div>
+          <SocialLinks />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

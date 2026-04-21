@@ -1,0 +1,21 @@
+---
+import config from "@shConfig";
+
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+// Tối ưu: Đổi mặc định từ zh-Hant sang en-US
+const locale = config.lang || "en-US";
+---
+
+<time datetime={date.toISOString()}>
+  {
+    date.toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  }
+</time>

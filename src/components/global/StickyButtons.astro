@@ -1,0 +1,13 @@
+---
+import ToComment from "./ToComment.astro";
+import ToTop from "./ToTop.astro";
+
+const IS_BLOG = Astro.url.pathname.startsWith("/blog/");
+---
+
+<div
+  class="fixed right-4 bottom-12 z-50 flex flex-col items-center gap-4 lg:right-8 lg:bottom-40 lg:flex-row-reverse lg:-rotate-90"
+>
+  <ToTop />
+  {IS_BLOG && <ToComment />}
+</div>

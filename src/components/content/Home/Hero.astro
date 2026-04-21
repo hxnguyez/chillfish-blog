@@ -1,0 +1,69 @@
+---
+const { backgroundImage = DEFAULT_POST_IMAGE } = Astro.props;
+
+import { DEFAULT_POST_IMAGE } from "@/consts";
+import { Image } from "astro:assets";
+import config from "@shConfig";
+import React from "react";
+
+/**
+ * TỐI ƯU: 
+ * 1. Bỏ hiệu ứng chuyển cảnh (transitions) để load ảnh trực tiếp, không gây lag.
+ * 2. Sử dụng React.createElement cho các hàm export để tránh lỗi parser của Astro.
+ */
+
+export function HeroTitle({ children }: { children: React.ReactNode }) {
+  return React.createElement(
+    "h1",
+    {
+      "data-pagefind-meta": "title",
+      className: "mb-4 text-4xl leading-tight font-bold text-white md:text-6xl",
+    },
+    children
+  );
+}
+
+export function HeroSubtitle({ children }: { children: React.ReactNode }) {
+  return React.createElement(
+    "p",
+    {
+      className: "line-clamp-3 overflow-hidden text-2xl text-white/40 md:text-4xl",
+    },
+    children
+  );
+}
+---
+
+<section class="relative h-screen max-h-175 overflow-hidden px-4 py-10">
+  <div class="pointer-events-none absolute inset-0">
+    <Image
+      src={backgroundImage ?? config.style.heroImage.src}
+      inferSize={true}
+      alt=""
+      class={"w-full h-full object-cover bg-fixed" +
+        (config.style.heroImage.method === "mask" ? " bg-linear-to-b" : " z-0")}
+      style={config.style.heroImage.method === "mask"
+        ? `-webkit-mask-image: linear-gradient(to bottom, transparent ${config.style.heroImage.from}%, black ${config.style.heroImage.to}%); mask-image: linear-gradient(to bottom, transparent ${config.style.heroImage.from}%, black ${config.style.heroImage.to}%);`
+        : undefined}
+      width={1920}
+      height={700}
+      fetchpriority="high"
+      loading="eager"
+      quality="mid"
+    />
+    {
+      config.style.heroImage.method === "overlay" && (
+        <div class="absolute inset-0 z-1 bg-linear-to-b from-black/60 to-black" />
+      )
+    }
+  </div>
+
+  <div class="relative z-10 flex h-full items-end justify-center">
+    <div class="w-full md:w-[80vw] md:max-w-7xl md:min-w-3xl">
+      <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
+        <slot name="left" />
+        <slot name="right" />
+      </div>
+    </div>
+  </div>
+</section>

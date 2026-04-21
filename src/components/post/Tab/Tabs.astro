@@ -1,0 +1,149 @@
+---
+import { cn } from "@lib/utils";
+import { SearchAlert } from "@lucide/astro";
+import I18nKey from "@i18n/i18nKey";
+import i18n from "@i18n/translation";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+// Kiểm tra tính duy nhất của defaultOpen
+const html = await Astro.slots
+  .render("default")
+  .then((result) => result.replace(/&quot;/g, '"'));
+
+const defaultOpenCount = (html.match(/data-default-open="true"/g) || []).length;
+const hasError = defaultOpenCount > 1;
+
+if (hasError) {
+  console.error(
+    i18n(I18nKey.tabs_warning_multiple_default_open, {
+      count: defaultOpenCount,
+    }),
+  );
+}
+---
+
+{
+  hasError ? (
+    <div class={cn("sh-builtin-components flex min-h-35 flex-col items-center justify-center gap-2 rounded-lg border border-red-500/10 bg-red-950 px-5 py-5 text-red-500", className)}>
+      <div class="flex size-8 items-center justify-center rounded-lg border border-red-500/80 bg-red-800/50">
+        <SearchAlert size={20} />
+      </div>
+      {i18n(I18nKey.tabs_multiple_default_open_description)}
+    </div>
+  ) : (
+    <div class={cn("sh-builtin-components tabs-container my-6 overflow-hidden rounded-lg border border-white/10 bg-[#0F0F0F]", className)}>
+      <div class="tabs-nav-wrapper relative border-b border-white/10 bg-neutral-900/50">
+        <div class="tab-nav scrollbar-custom relative flex overflow-x-auto overflow-y-hidden px-2 whitespace-nowrap transition-all">
+          <div class="tab-sliding-line pointer-events-none absolute bottom-0 left-0 h-[2px] bg-green-500 opacity-0 transition-all duration-200" />
+        </div>
+      </div>
+      <div class="tab-panels px-5 pt-2 pb-5">
+        <slot />
+      </div>
+    </div>
+  )
+}
+
+<style>
+  /* Custom Scrollbar */
+  .scrollbar-custom::-webkit-scrollbar { height: 4px; }
+  .scrollbar-custom::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  /* Gradient Overlays for horizontal scroll */
+  .tabs-nav-wrapper::before, .tabs-nav-wrapper::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 40px;
+    z-index: 20; pointer-events: none; transition: opacity 0.3s ease; opacity: 0;
+  }
+  .tabs-nav-wrapper::before { left: 0; background: linear-gradient(to right, #0f0f0f 0%, transparent 100%); }
+  .tabs-nav-wrapper::after { right: 0; background: linear-gradient(to left, #0f0f0f 0%, transparent 100%); }
+  .show-left::before { opacity: 1; }
+  .show-right::after { opacity: 1; }
+</style>
+
+<script is:inline>
+  function initTabs() {
+    const containers = document.querySelectorAll(".tabs-container:not([data-initialized-enhanced])");
+
+    containers.forEach((container) => {
+      container.setAttribute("data-initialized-enhanced", "true");
+      const wrapper = container.querySelector(".tabs-nav-wrapper");
+      const nav = container.querySelector(".tab-nav");
+      const panels = container.querySelectorAll(".tab-panel");
+      const line = container.querySelector(".tab-sliding-line");
+      const controller = new AbortController();
+
+      let defaultIndex = 0;
+      panels.forEach((p, idx) => { if (p.getAttribute("data-default-open") === "true") defaultIndex = idx; });
+
+      const updateGradients = () => {
+        if (!nav) return;
+        nav.scrollLeft > 1 ? wrapper.classList.add("show-left") : wrapper.classList.remove("show-left");
+        nav.scrollLeft < (nav.scrollWidth - nav.clientWidth - 1) ? wrapper.classList.add("show-right") : wrapper.classList.remove("show-right");
+      };
+
+      nav.addEventListener("scroll", updateGradients, { signal: controller.signal });
+
+      panels.forEach((panel, idx) => {
+        const label = panel.getAttribute("data-label");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerText = label;
+        btn.className = `tab-button flex-shrink-0 relative z-10 px-4 py-2 text-sm font-medium transition-colors duration-200 outline-none`;
+
+        if (idx === defaultIndex) {
+          btn.classList.add("text-green-400");
+          panel.classList.remove("hidden");
+        } else {
+          btn.classList.add("text-gray-400", "hover:text-gray-200");
+          panel.classList.add("hidden");
+        }
+
+        btn.addEventListener("click", () => switchTab(btn, idx), { signal: controller.signal });
+        nav.insertBefore(btn, line);
+      });
+
+      const updateLine = (btn, behavior = "auto", shouldScroll = true) => {
+        if (!line || !btn) return;
+        line.style.opacity = "1";
+        line.style.width = `${btn.offsetWidth}px`;
+        line.style.transform = `translateX(${btn.offsetLeft}px)`;
+        if (shouldScroll) btn.scrollIntoView({ behavior, block: "nearest", inline: "center" });
+      };
+
+      function switchTab(activeBtn, targetIdx) {
+        container.querySelectorAll(".tab-button").forEach(b => {
+          b.classList.remove("text-green-400");
+          b.classList.add("text-gray-400", "hover:text-gray-200");
+        });
+        activeBtn.classList.add("text-green-400");
+        activeBtn.classList.remove("text-gray-400", "hover:text-gray-200");
+        updateLine(activeBtn, "auto");
+        panels.forEach((p, i) => i === targetIdx ? p.classList.remove("hidden") : p.classList.add("hidden"));
+      }
+
+      requestAnimationFrame(() => {
+        const targetBtn = container.querySelectorAll(".tab-button")[defaultIndex];
+        if (targetBtn) updateLine(targetBtn, "auto", false);
+        updateGradients();
+      });
+
+      window.addEventListener("resize", () => {
+        const activeBtn = container.querySelector(".tab-button.text-green-400");
+        if (activeBtn) updateLine(activeBtn, "auto", false);
+        updateGradients();
+      }, { signal: controller.signal });
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), { once: true });
+    });
+  }
+  document.addEventListener("astro:page-load", initTabs);
+</script>

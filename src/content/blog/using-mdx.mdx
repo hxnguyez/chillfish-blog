@@ -1,0 +1,33 @@
+---
+title: Getting Started with MDX Format
+description: SHBlog Next supports MDX format out of the box, allowing you to use JavaScript and UI components directly within your Markdown. Here is a guide on how to write posts using MDX.
+pubDate: Jun 01 2024
+heroImage: ../../assets/blog-placeholder-5.jpg
+category: ["Examples"]
+draft: false
+---
+
+import { Button } from "@ui/button.tsx";
+
+This theme comes pre-installed and configured with the [@astrojs/mdx](https://docs.astro.build/en/guides/integrations-guide/mdx/) integration. The specific configurations are already set in the `astro.config.mjs` file. If you prefer not to use MDX, you can simply remove the integration from the configuration file to disable it.
+
+## Why MDX?
+
+MDX is a special Markdown variant that supports embedded JavaScript and JSX syntax. This allows you to [mix JavaScript and UI components into your Markdown content](https://docs.astro.build/en/guides/markdown-content/#mdx-features), which is useful for creating interactive charts, alert boxes, and other dynamic features.
+
+If you already have content created with MDX, this integration makes it easy to migrate to Astro.
+
+## Example
+
+Below is an example of how to import and use a UI component within MDX.
+
+After opening this page in your browser, you should see a clickable button below.
+
+<Button client:load>Embedded Component in MDX</Button>
+
+
+- [MDX Syntax Documentation](https://mdxjs.com/docs/what-is-mdx)
+
+- [Astro Documentation on Markdown & MDX](https://docs.astro.build/en/guides/markdown-content/#markdown-and-mdx-pages)
+
+- **Note:** Creating interactive components still requires [Client Directives](https://docs.astro.build/en/reference/directives-reference/#client-directives). Otherwise, all components in MDX will be rendered as static HTML by default (without JavaScript).

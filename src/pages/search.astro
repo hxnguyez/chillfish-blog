@@ -1,0 +1,116 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@components/content/Home/Hero.astro";
+import { HeroSubtitle, HeroTitle } from "@components/content/Home/HeroItems";
+
+import "@pagefind/component-ui/css";
+
+import BaseMainContent from "@/layouts/BaseMainContent.astro";
+import Sidebar from "@components/Sidebar.astro";
+import config from "@shConfig";
+
+const isProd = import.meta.env.PROD;
+---
+
+<BaseLayout
+  title={config.pages.other.search.title}
+  description={config.pages.other.search.subTitle}
+  coverImage={config.pages.other.search.heroImage}
+>
+  {
+    isProd ? (
+      <>
+        <link
+          slot="head"
+          href="/pagefind/pagefind-component-ui.css"
+          rel="stylesheet"
+        />
+        <script
+          slot="head"
+          src="/pagefind/pagefind-component-ui.js"
+          type="module"
+        />
+      </>
+    ) : (
+      <>
+        <script slot="head">import('@pagefind/component-ui');</script>
+        <pagefind-config bundle-path="/pagefind/" />
+      </>
+    )
+  }
+
+  <Hero>
+    <div class="lg:col-span-2" slot="left">
+      <HeroTitle>{config.pages.other.search.title}</HeroTitle>
+      <HeroSubtitle>{config.pages.other.search.subTitle}</HeroSubtitle>
+    </div>
+  </Hero>
+
+  <BaseMainContent>
+    <div class="max-w-full min-w-0 flex-1" id="sh-search">
+      {/* Tối ưu: Đổi placeholder sang tiếng Anh */}
+      <pagefind-input placeholder="Search for posts..." autofocus></pagefind-input>
+
+      <div class="mt-4" id="sh-search-results">
+        <pagefind-results show-images></pagefind-results>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <pagefind-summary></pagefind-summary>
+        <pagefind-keyboard-hints></pagefind-keyboard-hints>
+      </div>
+    </div>
+
+    <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
+      <Sidebar />
+    </aside>
+  </BaseMainContent>
+</BaseLayout>
+
+<script is:inline>
+  window.addEventListener("DOMContentLoaded", () => {
+    const input = document.querySelector("input.pf-input");
+    if (input && input.tagName === "INPUT") {
+      input.focus();
+    }
+  });
+</script>
+
+<script>
+  import { getInstanceManager } from "@pagefind/component-ui";
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get("q");
+
+  if (query) {
+    const input = document.querySelector("input.pf-input") as HTMLInputElement;
+    if (input && input.tagName === "INPUT") {
+      input.value = query;
+      const instance = getInstanceManager().getInstance("default");
+      instance?.triggerSearch(query);
+    }
+  }
+</script>
+
+<style>
+  #sh-search {
+    --pf-text: var(--foreground);
+    --pf-text-secondary: var(--muted-foreground);
+    --pf-background: var(--background);
+    --pf-border: var(--border);
+    --pf-border-focus: var(--ring);
+    --pf-skeleton: var(--muted);
+    --pf-skeleton-shine: var(--muted-foreground);
+    --pf-hover: var(--accent);
+    --pf-mark: var(--primary);
+    --pf-error-bg: color-mix(in oklab, var(--color-red-50) 10%, transparent);
+    --pf-error-border: var(--color-red-500);
+    --pf-error-text: var(--color-red-500);
+    --pf-error-text-secondary: var(--color-red-600);
+    --pf-outline-focus: var(--ring);
+    --pf-outline-width: 2px;
+    --pf-outline-offset: 2px;
+    /* Tối ưu: Đổi font sang chuẩn hệ thống mượt hơn */
+    --pf-font: ui-sans-serif, system-ui, sans-serif;
+  }
+</style>
