@@ -8,15 +8,22 @@ import BaseMainContent from "@/layouts/BaseMainContent.astro";
 import { HeroSubtitle, HeroTitle } from "@components/content/Home/HeroItems";
 import config from "@shConfig";
 
-// 1. Lấy dữ liệu từ "kho" LAB thay vì Blog
+// 1. Lấy dữ liệu từ "kho" LAB
 const labPosts = (
-  await getCollection("lab") // Không truyền thêm hàm filter nào ở đây
+  await getCollection("lab", ({ data }) => {
+    if (import.meta.env.DEV) return true;
+    return data.draft !== true;
+  })
 ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Lấy bài nghiên cứu mới nhất để ghim lên Banner bên phải (nếu muốn)
+// Lấy bài nghiên cứu mới nhất để ghim lên Banner bên phải
 const featuredLab = labPosts[0];
 const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
-const { title, subTitle, heroImage } = config.pages.other.projects;
+
+/**
+ * FIX: Đổi từ .projects sang .lab để khớp với shblog.config.ts
+ */
+const { title, subTitle, heroImage } = config.pages.other.lab;
 ---
 
 <BaseLayout
@@ -24,12 +31,12 @@ const { title, subTitle, heroImage } = config.pages.other.projects;
   description={subTitle}
   coverImage={heroImage}
 >
-  <Hero>
+  <Hero backgroundImage={heroImage}>
     <div class="lg:col-span-2" slot="left">
       <HeroTitle>
         <span class="whitespace-pre-line">{title}</span>
       </HeroTitle>
-      <HeroSubtitle slot="right">
+      <HeroSubtitle>
         {subTitle}
       </HeroSubtitle>
     </div>
@@ -41,17 +48,19 @@ const { title, subTitle, heroImage } = config.pages.other.projects;
             href={`/lab/${featuredLab.id}/`}
             class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
             style={{
+              /* FIX: Bỏ .src vì heroImage hiện tại là string đường dẫn */
               backgroundImage: featuredLab.data.heroImage
-                ? `url(${featuredLab.data.heroImage.src})`
-                : config.style.defaultPostImage,
+                ? `url(${featuredLab.data.heroImage})`
+                : `url(${config.style.defaultPostImage})`,
               backgroundSize: "cover",
+              backgroundPosition: "center",
               backgroundBlendMode: "darken",
             }}
           >
             <p class="mb-2.5 text-xl tracking-[4px] text-white/60">
               LATEST RESEARCH
             </p>
-            <h2 class="text-2xl font-bold text-white transition-colors group-hover:text-white/90">
+            <h2 class="text-2xl font-bold text-white transition-colors group-hover:text-white/90 line-clamp-2">
               {featuredLab.data.title}
             </h2>
           </a>
@@ -62,11 +71,8 @@ const { title, subTitle, heroImage } = config.pages.other.projects;
 
   <BaseMainContent>
     <div class="flex-1" data-pagefind-body transition:name="main-content">
-      {/* LƯU Ý: Nếu Component BlogList của bạn bị fix cứng chỉ lấy bài từ 'blog', 
-          bạn có thể cần tạo một bản sao hoặc truyền props collection="lab".
-          Nhưng thường thì nó sẽ lấy từ prop posts.
-      */}
-      <BlogList posts={labPosts} collection="lab" />
+      {/* Truyền collection="lab" để BlogList biết đường mà lọc dữ liệu */}
+      <BlogList posts={labPosts} collection="lab" currentPage={currentPage} />
     </div>
 
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">

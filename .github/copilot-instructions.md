@@ -31,7 +31,7 @@ Important conventions & patterns (repo-specific)
 - Content collections + schema: `src/content.config.ts` defines the `blog` collection with a `loader` and a Zod schema that enforces the frontmatter fields (title, description, pubDate, updatedDate?, heroImage?, tags?, category?, draft?). If you add a new frontmatter field (e.g., `tags`), update this schema.
   - The schema uses `image()` for `heroImage` and `z.coerce.date()` for `pubDate`/`updatedDate`.
 - Content file location & IDs: Post files live under `src/content/blog/` and are accessed by id via `getCollection('blog')`. Slugs are `post.id` and are generated from file names by `astro:content`.
-- Relative asset references for heroImage: Frontmatter uses relative imports such as `heroImage: '../../assets/blog-placeholder-3.jpg'` (relative to the content file). These are used by `Image` from `astro:assets` in `BlogPost.astro`.
+- Relative asset references for heroImage: Frontmatter uses relative imports such as `heroImage: '/assets/blog/blog-placeholder-3.jpg'` (relative to the content file). These are used by `Image` from `astro:assets` in `BlogPost.astro`.
 - Rendering MDX: `src/pages/blog/[...slug].astro` uses `render(post)` to return `{ Content }`, then embeds `<Content />` in the layout.
 - Link patterns: The site links to posts via `/blog/${post.id}/`. Keep trailing-slash patterns consistent.
 - Layout and props: `BlogPost.astro` reads meta with `Astro.props` and `Image` from `astro:assets` handles image sizing. Example props: `title`, `description`, `pubDate`, `updatedDate`, `heroImage`.
@@ -55,7 +55,7 @@ Small examples you can use directly
 title: "Your Post Title"
 description: "Short desc for listing"
 pubDate: "Nov 01 2025"
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: "/assets/blog/blog-placeholder-5.jpg"
 tags: ["tag1", "tag2"]
 ---
 

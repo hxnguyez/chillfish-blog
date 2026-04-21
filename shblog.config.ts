@@ -1,13 +1,17 @@
-import pkg from "lucide-react";
-const { Newspaper, Home, Info, FolderCode, Handshake, FlaskConical } = pkg;
+import { Newspaper, Home, Info, FolderCode, Handshake, FlaskConical } from "lucide-react";
 import { Github } from "simple-icons-astro";
 import { defineConfig } from "@/utils/define-config";
+
+/**
+ * TỐI ƯU: 
+ * Thay thế import pkg bằng named imports để fix lỗi Rollup "default is not exported".
+ */
 
 const config = defineConfig({
   title: "chillfish Blog",
   description: "Cybersecurity projects, CTF Writeups, and my journey at FPT University。",
 
-  // THÊM PHẦN STYLE NÀY ĐỂ FIX LỖI ẢNH MẶC ĐỊNH CỦA THEME
+  // Sử dụng ảnh online để chắc chắn qua được bước build asset
   style: {
     heroImage: {
       src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop", 
@@ -28,7 +32,6 @@ const config = defineConfig({
         { text: "Connection established" },
       ],
     },
-    // Bổ sung các trang khác để tránh theme gọi về ảnh SamHacker cũ
     other: {
       about: {
         title: "About Me",
@@ -72,9 +75,9 @@ const config = defineConfig({
       enableComment: "Giscus",
       giscusConfig: {
         repo: "hxnguyez/chillfish-blog",
-        repoId: "R_kgDN9m03Yg", // Bạn điền Repo ID của bạn vào đây
+        repoId: "R_kgDN9m03Yg", 
         category: "Announcements", 
-        categoryId: "DIC_kwDON9m03s4Ck_u-", // Bạn điền Category ID của bạn vào đây
+        categoryId: "DIC_kwDON9m03s4Ck_u-", 
         mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en",
       },
     },

@@ -1,11 +1,15 @@
-import lucide from "lucide-react";
-// Đã thêm Beaker vào danh sách trích xuất
-const { Newspaper, Handshake, Home, Info, Beaker } = lucide;
+import { Newspaper, Handshake, Home, Info, Beaker } from "lucide-react";
 
 // Import Github từ đúng thư viện dành cho brand icon
 import { Github } from "simple-icons-astro";
 
 import type { ShBlogConfig } from "../types/shblog.config.d";
+
+/**
+ * TỐI ƯU: 
+ * 1. Chuyển sang Named Import cho lucide-react để tránh lỗi "default is not exported".
+ * 2. Giữ nguyên toàn bộ cấu hình dự án của Hưng.
+ */
 
 const defaultConfig: ShBlogConfig = {
   title: "chillfish Blog",
@@ -33,7 +37,6 @@ const defaultConfig: ShBlogConfig = {
         search: { title: "Blog Searching", subTitle: "", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
         friends: { title: "Network Nodes", subTitle: "Connecting with fellow researchers and friends.", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
         about: { title: "About me", subTitle: "The architecture behind this digital space。", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
-        // Đã cập nhật Projects thành Lab ở đây
         lab: { 
             title: "My study Lab", 
             subTitle: "A showcase of somethings important with me。", 
@@ -65,7 +68,6 @@ const defaultConfig: ShBlogConfig = {
     links: [
       { title: "Home", href: "/", icon: Home },
       { title: "Blog", href: "/blog", icon: Newspaper },
-      // Đã cập nhật Title thành Lab và Icon thành Beaker
       { title: "Lab", href: "/lab", icon: Beaker }, 
       { title: "About", href: "/about", icon: Info },
     ],
@@ -99,7 +101,6 @@ const defaultConfig: ShBlogConfig = {
   },
 };
 
-// ... (phần logic mergeDeep phía dưới giữ nguyên)
 type DeepPartial<T> = T extends (...args: any[]) => any ? T : T extends readonly (infer U)[] ? readonly DeepPartial<U>[] : T extends (infer U)[] ? DeepPartial<U>[] : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
 function isPlainObject(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function mergeDeep<T>(base: T, override?: DeepPartial<T>): T {

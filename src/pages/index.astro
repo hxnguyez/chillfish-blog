@@ -14,13 +14,13 @@ import I18nKey from "@i18n/i18nKey";
 
 const posts = (
   await getCollection("blog", ({ data }) => {
-    // 開發環境顯示所有文章,生產環境過濾掉 draft 文章
+    // Hiển thị tất cả ở dev, lọc draft ở prod
     if (import.meta.env.DEV) return true;
     return data.draft !== true;
   })
 )
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6); // Get latest 6 posts
+  .slice(0, 6); // Lấy 6 bài mới nhất
 
 const featuredPost = posts[0];
 const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
@@ -31,18 +31,16 @@ const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
   description={SITE_DESCRIPTION}
   coverImage={config.pages.home.heroImage}
 >
-  <!-- Hero Section -->
-  <Hero>
-    <!-- Left: Main heading -->
+  <Hero backgroundImage={config.pages.home.heroImage}>
     <div class="lg:col-span-2" slot="left">
       <HeroTitle>
         <span class="whitespace-pre-line">{config.pages.home.title}</span>
       </HeroTitle>
-      <HeroSubtitle slot="right">
+      <HeroSubtitle>
         <Greeting />
       </HeroSubtitle>
     </div>
-    <!-- Right: Featured article card -->
+
     {
       config.style.enableRecentPosts && (
         <div class="flex flex-col items-end justify-end gap-5" slot="right">
@@ -51,10 +49,12 @@ const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
               href={`/blog/${featuredPost.id}/`}
               class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
               style={{
+                /* TỐI ƯU: Bỏ .src vì heroImage bây giờ là string đường dẫn tĩnh */
                 backgroundImage: featuredPost.data.heroImage
-                  ? `url(${featuredPost.data.heroImage.src})`
-                  : config.style.defaultPostImage,
+                  ? `url(${featuredPost.data.heroImage})`
+                  : `url(${config.style.defaultPostImage})`,
                 backgroundSize: "cover",
+                backgroundPosition: "center",
                 backgroundBlendMode: "darken",
               }}
             >
@@ -71,14 +71,11 @@ const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
     }
   </Hero>
 
-  <!-- Main content section -->
   <BaseMainContent>
-    <!-- Main column: Blog posts grid -->
     <div class="flex-1" data-pagefind-body transition:name="main-content">
       <BlogList currentPage={currentPage} />
     </div>
 
-    <!-- Sidebar -->
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
       <Sidebar />
     </aside>
