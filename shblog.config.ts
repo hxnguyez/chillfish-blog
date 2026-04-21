@@ -1,14 +1,21 @@
 import pkg from "lucide-react";
 const { Newspaper, Home, Info, FolderCode, Handshake, FlaskConical } = pkg;
-
-// Import component Github để dùng cho footer
 import { Github } from "simple-icons-astro";
-
 import { defineConfig } from "@/utils/define-config";
 
 const config = defineConfig({
   title: "chillfish Blog",
   description: "Cybersecurity projects, CTF Writeups, and my journey at FPT University。",
+
+  // THÊM PHẦN STYLE NÀY ĐỂ FIX LỖI ẢNH MẶC ĐỊNH CỦA THEME
+  style: {
+    heroImage: {
+      src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop", 
+      method: "overlay",
+      from: 0,
+      to: 100,
+    },
+  },
 
   pages: {
     home: {
@@ -21,26 +28,73 @@ const config = defineConfig({
         { text: "Connection established" },
       ],
     },
-    // THÊM ĐOẠN NÀY ĐỂ FIX LỖI ẢNH NOT FOUND
+    // Bổ sung các trang khác để tránh theme gọi về ảnh SamHacker cũ
     other: {
       about: {
         title: "About Me",
         subTitle: "Something about chillfish",
-        heroImage: "/assets/blog-placeholder-about.jpg" // Dùng ảnh placeholder có sẵn trong src/assets
+        heroImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop"
       },
       search: {
         title: "Search Results",
         subTitle: "Find my research papers and writeups",
-        heroImage: "/assets/blog-placeholder-1.jpg"
+        heroImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop"
       }
     }
   },
 
   author: {
-    // ... giữ nguyên ...
+    name: "HungNguyen",
+    bio: "FPT University Student | Cybersecurity & CTF Enthusiast。",
+    avatarUrl: "/avatar.png", 
+    links: [
+      { 
+        icon: "Github",
+        to: "https://github.com/hxnguyez", 
+        label: "GitHub" 
+      },
+    ],
   },
-  
-  // ... các phần còn lại giữ nguyên ...
+
+  navBar: {
+    links: [
+      { title: "Home", href: "/", icon: Home },
+      { title: "Blog", href: "/blog", icon: Newspaper },
+      { title: "Lab", href: "/lab", icon: FlaskConical },
+      { title: "About", href: "/about", icon: Info },
+    ],
+  },
+
+  behavior: {
+    enableGTM: false,
+    gtmConfig: { googleTagManagerId: "" }, 
+    commentConfig: {
+      enableComment: "Giscus",
+      giscusConfig: {
+        repo: "hxnguyez/chillfish-blog",
+        repoId: "R_kgDN9m03Yg", // Bạn điền Repo ID của bạn vào đây
+        category: "Announcements", 
+        categoryId: "DIC_kwDON9m03s4Ck_u-", // Bạn điền Category ID của bạn vào đây
+        mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en",
+      },
+    },
+  },
+
+  footer: {
+    description: "When you dive into the deep sea,\n you don't look for the light; you become it。\n--- chillfish ---",
+    links: [
+      { 
+        socialMedia: Github as any, 
+        url: "https://github.com/hxnguyez" 
+      }
+    ],
+    copyright: {
+      text: "CC BY-NC 4.0",
+      url: "https://creativecommons.org/licenses/by-nc/4.0/",
+      yearUpdateStrategy: "auto",
+    },
+    countryEmoji: "⾮🇻🇳",
+  },
 });
 
 export default config;

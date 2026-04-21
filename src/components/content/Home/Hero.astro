@@ -2,14 +2,13 @@
 const { backgroundImage = DEFAULT_POST_IMAGE } = Astro.props;
 
 import { DEFAULT_POST_IMAGE } from "@/consts";
-import { Image } from "astro:assets";
 import config from "@shConfig";
 import React from "react";
 
 /**
  * TỐI ƯU: 
- * 1. Bỏ hiệu ứng chuyển cảnh (transitions) để load ảnh trực tiếp, không gây lag.
- * 2. Sử dụng React.createElement cho các hàm export để tránh lỗi parser của Astro.
+ * 1. Sử dụng thẻ <img> thuần thay vì <Image /> để tránh lỗi ImageNotFound khi build trên Vercel.
+ * 2. Đảm bảo ảnh được load từ thư mục public/ trực tiếp qua đường dẫn tĩnh.
  */
 
 export function HeroTitle({ children }: { children: React.ReactNode }) {
@@ -36,20 +35,17 @@ export function HeroSubtitle({ children }: { children: React.ReactNode }) {
 
 <section class="relative h-screen max-h-175 overflow-hidden px-4 py-10">
   <div class="pointer-events-none absolute inset-0">
-    <Image
+    {/* Dùng thẻ img thuần để bypass lỗi build của Astro 6 */}
+    <img
       src={backgroundImage ?? config.style.heroImage.src}
-      inferSize={true}
       alt=""
       class={"w-full h-full object-cover bg-fixed" +
         (config.style.heroImage.method === "mask" ? " bg-linear-to-b" : " z-0")}
       style={config.style.heroImage.method === "mask"
         ? `-webkit-mask-image: linear-gradient(to bottom, transparent ${config.style.heroImage.from}%, black ${config.style.heroImage.to}%); mask-image: linear-gradient(to bottom, transparent ${config.style.heroImage.from}%, black ${config.style.heroImage.to}%);`
         : undefined}
-      width={1920}
-      height={700}
       fetchpriority="high"
       loading="eager"
-      quality="mid"
     />
     {
       config.style.heroImage.method === "overlay" && (

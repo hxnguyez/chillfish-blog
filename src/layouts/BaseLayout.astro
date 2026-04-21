@@ -4,16 +4,12 @@ import Footer from "../components/core/Footer.astro";
 import Header from "../components/core/Header.astro";
 import { SITE_DESCRIPTION } from "../consts.ts";
 import StickyButtons from "../components/global/StickyButtons.astro";
-// Tối ưu: Xóa bỏ CSS của Lenis
-// import "lenis/dist/lenis.css";
 import config from "@shConfig";
 
 import "../styles/global.css";
 import "../styles/view-transitions.css";
 
-// Tối ưu: Đổi mặc định sang tiếng Anh
 const LANG = config.lang || "en";
-
 const { title, description, coverImage } = Astro.props;
 ---
 
@@ -29,19 +25,20 @@ const { title, description, coverImage } = Astro.props;
   </head>
   <body class="flex min-h-screen flex-col bg-neutral-950 text-neutral-50">
     <Header />
-    <slot />
+    <main class="flex-1">
+      <slot />
+    </main>
     <Footer />
     <StickyButtons />
   </body>
 </html>
 
-<script>
-  // Đã loại bỏ Lenis để tăng tốc độ phản hồi trang
-</script>
-
 <style is:global>
-  /* Thêm dòng này để cuộn mượt bằng CSS (nhẹ hơn JS 100 lần) */
   html {
     scroll-behavior: smooth;
+  }
+  /* Fix layout cho main content */
+  body {
+    overflow-x: hidden;
   }
 </style>
