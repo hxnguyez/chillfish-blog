@@ -1,29 +1,29 @@
-import { Newspaper, Home, Info, FolderCode, Handshake, FlaskConical } from "lucide-react";
+import { Newspaper, Home, Info, FlaskConical } from "lucide-react";
 import { Github } from "simple-icons-astro";
 import { defineConfig } from "@/utils/define-config";
-
-/**
- * TỐI ƯU: 
- * Thay thế import pkg bằng named imports để fix lỗi Rollup "default is not exported".
- */
 
 const config = defineConfig({
   title: "chillfish Blog",
   description: "Cybersecurity projects, CTF Writeups, and my journey at FPT University。",
 
-  // Sử dụng ảnh online để chắc chắn qua được bước build asset
   style: {
     heroImage: {
-      src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop", 
+      src: "/assets/layouts/homepage/homepage.webp", 
       method: "overlay",
-      from: 0,
-      to: 100,
+      from: 50,
+      to: 80,
     },
+    // Không khai báo defaultPostImage ở đây nữa
+    postsPerPage: 10,
+    titleSeparator: "|",
+    enableTransitions: true,
+    enableRecentPosts: true,
   },
 
   pages: {
     home: {
       title: "@hxnguyez。",
+      heroImage: "/assets/layouts/homepage/homepage.webp",
       greetings: [
         { begin: 0, finish: 6, text: "sleeping..." },
         { begin: 6, finish: 12, text: "have a good day!" },
@@ -33,16 +33,9 @@ const config = defineConfig({
       ],
     },
     other: {
-      about: {
-        title: "About Me",
-        subTitle: "Something about chillfish",
-        heroImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop"
-      },
-      search: {
-        title: "Search Results",
-        subTitle: "Find my research papers and writeups",
-        heroImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop"
-      }
+      about: { title: "About Me", subTitle: "Something about chillfish", heroImage: "/assets/layouts/homepage/homepage.webp" },
+      search: { title: "Search Results", subTitle: "Find my research", heroImage: "/assets/layouts/homepage/homepage.webp" },
+      lab: { title: "My study Lab", subTitle: "Showcase", heroImage: "/assets/layouts/homepage/homepage.webp" }
     }
   },
 
@@ -50,13 +43,7 @@ const config = defineConfig({
     name: "HungNguyen",
     bio: "FPT University Student | Cybersecurity & CTF Enthusiast。",
     avatarUrl: "/avatar.png", 
-    links: [
-      { 
-        icon: "Github",
-        to: "https://github.com/hxnguyez", 
-        label: "GitHub" 
-      },
-    ],
+    links: [{ icon: "Github", to: "https://github.com/hxnguyez", label: "GitHub" }],
   },
 
   navBar: {
@@ -69,8 +56,6 @@ const config = defineConfig({
   },
 
   behavior: {
-    enableGTM: false,
-    gtmConfig: { googleTagManagerId: "" }, 
     commentConfig: {
       enableComment: "Giscus",
       giscusConfig: {
@@ -84,19 +69,10 @@ const config = defineConfig({
   },
 
   footer: {
-    description: "When you dive into the deep sea,\n you don't look for the light; you become it。\n--- chillfish ---",
-    links: [
-      { 
-        socialMedia: Github as any, 
-        url: "https://github.com/hxnguyez" 
-      }
-    ],
-    copyright: {
-      text: "CC BY-NC 4.0",
-      url: "https://creativecommons.org/licenses/by-nc/4.0/",
-      yearUpdateStrategy: "auto",
-    },
-    countryEmoji: "⾮🇻🇳",
+    description: "When you dive into the deep sea, you become the light。",
+    links: [{ socialMedia: Github as any, url: "https://github.com/hxnguyez" }],
+    copyright: { text: "CC BY-NC 4.0", url: "https://creativecommons.org/licenses/by-nc/4.0/", yearUpdateStrategy: "auto" },
+    countryEmoji: "🇻🇳",
   },
 });
 

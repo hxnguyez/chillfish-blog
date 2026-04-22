@@ -21,7 +21,7 @@ const defaultConfig: ShBlogConfig = {
   pages: {
     home: {
       title: "When you dive into the deep sea,\nyou don't look for the light; you become it。",
-      heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp",
+      heroImage: "/assets/layouts/homepage/homepage.webp",
       greetings: [
         { begin: 0, finish: 5, text: "sleeping..." },
         { begin: 5, finish: 12, text: "have a good day!" },
@@ -32,22 +32,22 @@ const defaultConfig: ShBlogConfig = {
         { text: "Hi, welcome to my digital abyss!" },
       ],
     },
-    blog: { title: "Archives", subTitle: "Every thought, every love and effort。", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
+    blog: { title: "Archives", subTitle: "Every thought, every love and effort。", heroImage: "/assets/layouts/homepage/homepage.webp" },
     other: {
-        search: { title: "Blog Searching", subTitle: "", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
-        friends: { title: "Network Nodes", subTitle: "Connecting with fellow researchers and friends.", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
-        about: { title: "About me", subTitle: "The architecture behind this digital space。", heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" },
+        search: { title: "Blog Searching", subTitle: "", heroImage: "/assets/layouts/homepage/homepage.webp" },
+        friends: { title: "Network Nodes", subTitle: "Connecting with fellow researchers and friends.", heroImage: "/assets/layouts/homepage/homepage.webp" },
+        about: { title: "About me", subTitle: "The architecture behind this digital space。", heroImage: "/assets/layouts/homepage/homepage.webp" },
         lab: { 
             title: "My study Lab", 
             subTitle: "A showcase of somethings important with me。", 
-            heroImage: "/assets/layouts/homepage/samhacker_homepage_background.webp" 
+            heroImage: "/assets/layouts/homepage/homepage.webp" 
         },
     }
   },
 
   style: {
-    heroImage: { from: 60, to: 100, src: "/assets/layouts/homepage/samhacker_homepage_background.webp", method: "overlay" },
-    defaultPostImage: "/assets/layouts/homepage/samhacker_homepage_background.webp",
+    heroImage: { from: 60, to: 100, src: "/assets/layouts/homepage/homepage.webp", method: "overlay" },
+    defaultPostImage: "/assets/layouts/homepage/homepage.webp",
     postsPerPage: 10,
     titleSeparator: "|",
     enableTransitions: true, 

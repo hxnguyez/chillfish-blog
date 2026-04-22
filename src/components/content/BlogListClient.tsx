@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import BlogCard from "../widgets/BlogCard.tsx";
 import EmptyBlog from "../widgets/EmptyBlog.tsx";
@@ -9,7 +11,9 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@ui/pagination.tsx";
-import { DEFAULT_POST_IMAGE } from "@/consts.ts";
+
+// Lưu ý: Nếu bạn muốn ảnh Template làm mặc định, hãy sửa trực tiếp ở đây
+const FALLBACK_IMAGE = "/assets/blog/BlogImageTemplate.jpg";
 
 type Post = {
   id: string;
@@ -17,7 +21,7 @@ type Post = {
     title: string;
     description?: string;
     pubDate: string; 
-    heroImage?: { src: string } | null;
+    heroImage?: string | null; // FIX: Đã đổi từ Object sang String
     category: string | string[] | null;
     tags: string[] | null;
   };
@@ -74,7 +78,6 @@ export default function BlogListClient({
     url.searchParams.set("page", String(page));
     window.history.pushState({}, "", url.toString());
     setCurrentPage(page);
-    // Tối ưu: Đổi 'smooth' thành 'auto' để tránh khựng hình khi chuyển trang trên máy yếu
     window.scrollTo({ top: 0, behavior: "auto" });
   };
 
@@ -91,7 +94,8 @@ export default function BlogListClient({
                 title={post.data.title}
                 description={post.data.description}
                 pubDate={post.data.pubDate.toISOString()}
-                heroImage={post.data.heroImage?.src || DEFAULT_POST_IMAGE}
+                // FIX: Lấy trực tiếp heroImage (vì giờ nó là string), nếu không có mới dùng fallback
+                heroImage={post.data.heroImage || FALLBACK_IMAGE}
                 category={post.data.category}
                 tags={post.data.tags}
                 href={`/blog/${post.id}/`}
