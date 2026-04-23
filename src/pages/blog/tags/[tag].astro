@@ -12,17 +12,14 @@ import TimelineSinglePost from "@ui/timeline/TimelineSinglePost.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => {
-    // 開發環境顯示所有文章,生產環境過濾掉 draft 文章
     if (import.meta.env.DEV) return true;
     return data.draft !== true;
   });
 
-  // 取得所有不重複的標籤
   const tags = [
     ...new Set(posts.map((post: any) => post.data.tags).flat()),
   ].filter((d: any) => !!d);
 
-  // 使用 Map 去重 slug,避免重複參數
   const tagsMap = new Map();
   tags.forEach((t: any) => {
     const slug = t.toLowerCase().replace(/\s+/g, "-");
@@ -31,8 +28,7 @@ export async function getStaticPaths() {
     }
   });
 
-  // 建立每個標籤的路徑
-  const tagsList = Array.from(tagsMap.entries()).map(([slug, t]) => {
+  return Array.from(tagsMap.entries()).map(([slug, t]) => {
     return {
       params: { tag: slug },
       props: {
@@ -47,13 +43,10 @@ export async function getStaticPaths() {
       },
     };
   });
-
-  return tagsList;
 }
 
 const { posts, tag } = Astro.props as any;
 
-// 按年份分組文章
 const postsByYear = posts.reduce((acc: any, post: any) => {
   const year = new Date(post.data.pubDate).getFullYear();
   if (!acc[year]) {
@@ -69,16 +62,12 @@ const years = Object.keys(postsByYear).sort(
 ---
 
 <BaseLayout
-  title={`標籤 ${tag} ${config.style.titleSeparator} ${SITE_TITLE}`}
-  description={`標籤為 ${tag} 的文章列表`}
+  title={`Tag: ${tag} ${config.style.titleSeparator} ${SITE_TITLE}`}
+  description={`List of articles tagged with ${tag}`}
 >
-  <!-- Hero Section -->
   <Hero>
     <div class="lg:col-span-2" slot="left">
-      <HeroTitle>{tag}</HeroTitle>
-      <HeroSubtitle slot="right">
-        以下是標籤為 {tag} 的所有文章列表。
-      </HeroSubtitle>
+      <HeroTitle>#{tag}</HeroTitle>
     </div>
   </Hero>
 
@@ -90,24 +79,22 @@ const years = Object.keys(postsByYear).sort(
             const yearPosts = postsByYear[year];
             return (
               <div class="relative">
-                {/* 年份標題 */}
                 <div class="mb-6 flex items-center gap-4">
                   <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
                     {year}
                   </h2>
                   <div class="flex items-center gap-2">
-                    <div class="h-3 w-3 rounded-full bg-green-500" />
+                    <div class="h-3 w-3 rounded-full bg-blue-500" />
                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                      {yearPosts.length} 篇文章
+                      {yearPosts.length} {yearPosts.length > 1 ? 'Posts' : 'Post'}
                     </span>
                   </div>
                 </div>
 
-                {/* 時間線 */}
                 <div class="relative border-l-2 border-gray-200 pl-8 dark:border-gray-700">
-                  {yearPosts.map((post: any, _index: number) => {
+                  {yearPosts.map((post: any) => {
                     const month = new Date(post.data.pubDate)
-                      .toLocaleDateString("zh-TW", {
+                      .toLocaleDateString(config.lang || "en-US", {
                         month: "2-digit",
                         day: "2-digit",
                       })
@@ -116,15 +103,10 @@ const years = Object.keys(postsByYear).sort(
 
                     return (
                       <div class="group relative mb-8">
-                        {/* 時間線圓點 */}
-                        <div class="absolute top-1 -left-9.75 h-3 w-3 rounded-full bg-gray-400 transition-colors group-hover:bg-green-500 dark:bg-gray-600" />
-
-                        {/* 日期標籤 */}
+                        <div class="absolute top-1 -left-9.75 h-3 w-3 rounded-full bg-gray-400 transition-colors group-hover:bg-blue-500 dark:bg-gray-600" />
                         <div class="mb-2 text-sm text-gray-500 dark:text-gray-400">
                           {month}
                         </div>
-
-                        {/* 文章卡片 */}
                         <TimelineSinglePost
                           postData={post}
                           postTags={postTags}

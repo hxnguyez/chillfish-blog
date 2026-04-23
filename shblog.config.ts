@@ -69,7 +69,7 @@ const config = defineConfig({
   },
 
   footer: {
-    description: "When you dive into the deep sea, you become the light。",
+    description: "When you dive into the deep sea,\n you don't look for the light; you become it。\n--- chillfish ---",
     links: [{ socialMedia: Github as any, url: "https://github.com/hxnguyez" }],
     copyright: { text: "CC BY-NC 4.0", url: "https://creativecommons.org/licenses/by-nc/4.0/", yearUpdateStrategy: "auto" },
     countryEmoji: "🇻🇳",
