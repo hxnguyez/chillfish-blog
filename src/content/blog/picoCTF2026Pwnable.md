@@ -36,7 +36,7 @@ Please enter your name: 999999999999999999999999999999999999999999999999999999
 Welcome to the secure echo service!
 Please enter your name: 99999999999999
 Hello, 999999999999999
- ]
+
 Thank you for using our service.
 ```
 ### Hiểu code C
