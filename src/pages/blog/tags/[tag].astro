@@ -72,7 +72,7 @@ const years = Object.keys(postsByYear).sort(
   </Hero>
 
   <BaseMainContent>
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
       <div class="space-y-8">
         {
           years.map((year) => {
@@ -122,6 +122,8 @@ const years = Object.keys(postsByYear).sort(
       </div>
     </div>
 
-    <Sidebar />
+    <aside class="w-full shrink-0 lg:w-80">
+      <Sidebar />
+    </aside>
   </BaseMainContent>
 </BaseLayout>
