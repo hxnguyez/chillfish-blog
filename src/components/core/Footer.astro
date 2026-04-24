@@ -1,5 +1,4 @@
 ---
-import SocialLinks from "./SocialLinks.astro";
 import config from "@shConfig";
 
 let year: number | null = null;
@@ -7,51 +6,96 @@ if (config.footer.copyright.yearUpdateStrategy === "fixed") {
   year = new Date().getFullYear();
 } else if (typeof config.footer.copyright.yearUpdateStrategy === "number") {
   year = config.footer.copyright.yearUpdateStrategy;
+} else {
+  year = new Date().getFullYear();
 }
 ---
 
-<footer class="relative lg:h-[350px] py-0 lg:py-10 lg:px-4 overflow-hidden flex justify-center">
-  {/* Nền Gradient */}
-  <div class="absolute inset-0 pointer-events-none">
-    <img src="/assets/layouts/footer/footer_background_gradient.webp" alt="" class="w-full h-full object-cover" />
-  </div>
-
-  <div class="relative backdrop-blur-sm bg-white/5 border-0 lg:border border-white/10 rounded-none lg:rounded-[20px] p-6 md:p-10 h-full overflow-auto w-full max-w-[1278px]">
-    <div class="flex flex-col md:flex-row md:justify-between gap-8 h-full">
+<footer class="mt-auto w-full border-t border-white/10 bg-black/20 px-6 py-4 backdrop-blur-md">
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-between text-sm text-neutral-400">
+    
+    <div>
+      <button 
+        id="music-toggle" 
+        class="flex h-9 w-9 items-center justify-center rounded-md border border-white/20 transition-all hover:border-white/50 hover:text-white"
+        title="Play/Pause Background Music"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+      </button>
       
-      {/* Cột trái: Thông tin Blog */}
-      <div class="w-full md:w-[567px]">
-        <h3 class="text-white font-display text-xl font-black">{config.title}</h3>
-        <div class="h-px bg-white/20 w-full md:w-[260px] my-4"></div>
-        <div class="text-white/60 text-sm leading-6 tracking-[0.7px] mb-6 whitespace-pre-line">
-          {config.footer.description}
-        </div>
-        {/* SiteRuntime đã bị xóa tại đây */}
-      </div>
+      <audio id="bg-music" loop preload="none">
+        <source src="/assets/music/kimi-no-na-wa.mp3" type="audio/mpeg" />
+      </audio>
+    </div>
 
-      {/* Cột phải: Liên hệ & Bản quyền */}
-      <div class="w-full md:w-[567px] flex flex-col justify-between text-left md:text-right gap-6">
-        <div class="space-y-2">
-          <p class="text-white/80 text-sm leading-normal">
-            Non-commercial use is welcomed. Please credit the author and source link.
-            <br /> For collaborations, contact: 
-            <span class="underline ml-1">{config.author.email}</span>
-          </p>
-        </div>
+    <div class="hidden flex-1 text-center md:block">
+      &copy; {year} | Made with <span class="text-purple-500">💜</span> by <a href="/about" class="font-bold text-white transition-colors hover:text-purple-400">{config.author.name}.</a>
+    </div>
 
-        <div class="space-y-4">
-          <div class="text-white/50 text-[10px] leading-normal uppercase tracking-wider">
-            <p>
-              <a href="/" class="underline hover:text-white/80 transition-colors">{config.title}</a>
-              © <span class="sh-footer-year">{year || ""}</span> {config.author.name}
-            </p>
-            <p class="mt-1">
-               Licensed under <a href={config.footer.copyright.url || "#"} class="underline">{config.footer.copyright.text}</a>
-            </p>
-          </div>
-          <SocialLinks />
-        </div>
-      </div>
+    <div class="flex items-center gap-5">
+      <a href={config.author.links[0]?.to || "https://github.com/hxnguyez"} target="_blank" class="transition-colors hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+      </a>
+      <a href={`mailto:${config.author.email}`} class="transition-colors hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+      </a>
+      <a href="/rss.xml" class="transition-colors hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+      </a>
+
+      <div class="h-4 w-px bg-white/20"></div>
+
+      <button 
+        id="back-to-top" 
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 transition-all hover:border-white/50 hover:bg-white/10 hover:text-white"
+        title="Back to Top"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+      </button>
     </div>
   </div>
 </footer>
+
+<script>
+  function initFooter() {
+    // 1. Logic Phát Nhạc
+    const musicBtn = document.getElementById('music-toggle');
+    const audio = document.getElementById('bg-music') as HTMLAudioElement;
+
+    if (musicBtn && audio) {
+      audio.volume = 0.5; // Set âm lượng 50%
+      
+      const toggleMusic = () => {
+        if (audio.paused) {
+          audio.play();
+          musicBtn.classList.add('border-blue-400', 'text-blue-400');
+          musicBtn.classList.remove('border-white/20');
+        } else {
+          audio.pause();
+          musicBtn.classList.remove('border-blue-400', 'text-blue-400');
+          musicBtn.classList.add('border-white/20');
+        }
+      };
+      
+      // Clear event cũ tránh lỗi click đúp khi chuyển trang
+      musicBtn.replaceWith(musicBtn.cloneNode(true)); 
+      document.getElementById('music-toggle')?.addEventListener('click', toggleMusic);
+    }
+
+    // 2. Logic Cuộn Lên Đầu Trang
+    const topBtn = document.getElementById('back-to-top');
+    if (topBtn) {
+      topBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  }
+
+  // Khởi chạy
+  initFooter();
+  document.addEventListener('astro:page-load', initFooter);
+</script>

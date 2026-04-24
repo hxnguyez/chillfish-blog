@@ -7,6 +7,9 @@ import {
   CommandList,
 } from "@ui/command";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@ui/button";
+import { SearchIcon } from "@ui/animated/search";
+import { Dialog, DialogTrigger, DialogContent } from "@ui/dialog";
 
 type SearchEntry = {
   title: string;
@@ -28,11 +31,10 @@ export function SearchCommandBox() {
   const [error, setError] = useState<string | null>(null);
   const debounceTimer = useRef<number | null>(null);
 
-  // 初始化 Pagefind
+  // Khởi tạo Pagefind
   useEffect(() => {
     const initPagefind = async () => {
       try {
-        // 等待 pagefind 物件出現
         let attempts = 0;
         while (!window.pagefind && attempts < 30) {
           await new Promise((resolve) => setTimeout(resolve, 100));
@@ -40,7 +42,7 @@ export function SearchCommandBox() {
         }
 
         if (!window.pagefind) {
-          setError("Pagefind 未載入。請確認已執行 pnpm build");
+          setError("Pagefind not loaded. Please run pnpm build first.");
           return;
         }
 
@@ -48,8 +50,8 @@ export function SearchCommandBox() {
         setPagefindReady(true);
         setError(null);
       } catch (err) {
-        console.error("Pagefind 初始化失敗:", err);
-        setError("搜尋功能初始化失敗");
+        console.error("Pagefind init failed:", err);
+        setError("Failed to initialize search functionality.");
         setPagefindReady(false);
       }
     };
@@ -81,13 +83,13 @@ export function SearchCommandBox() {
             try {
               const data = await result.data();
               return {
-                title: data.meta?.title || data.title || "未命名",
+                title: data.meta?.title || data.title || "Untitled",
                 slug: result.id,
                 link: data.url || `/blog/${result.id}`,
                 description: data.excerpt || data.meta?.description,
               };
             } catch (err) {
-              console.error("解析搜尋結果失敗:", err);
+              console.error("Failed to parse search result:", err);
               return null;
             }
           }),
@@ -95,7 +97,7 @@ export function SearchCommandBox() {
 
         setResults(formattedResults.filter(Boolean) as SearchEntry[]);
       } catch (err) {
-        console.error("Pagefind 搜尋失敗:", err);
+        console.error("Pagefind search failed:", err);
         setResults([]);
       }
     }, 500);
@@ -114,7 +116,7 @@ export function SearchCommandBox() {
         }}
       >
         <CommandInput
-          placeholder="所以今天要看什麼呢..."
+          placeholder="Search for writeups, posts, or keywords..."
           value={query}
           onValueChange={setQuery}
           disabled={!pagefindReady}
@@ -126,18 +128,18 @@ export function SearchCommandBox() {
 
           {!pagefindReady && !error && (
             <div className="text-muted-foreground px-2 py-2 text-sm">
-              搜尋功能載入中...
+              Loading search engine...
             </div>
           )}
 
           {pagefindReady && query && results.length === 0 && (
             <CommandEmpty>
-              找不到結果，請試著清除關鍵字重試或修改目標關鍵字
+              No results found. Try a different keyword.
             </CommandEmpty>
           )}
 
           {results.length > 0 && (
-            <CommandGroup heading="搜尋結果">
+            <CommandGroup heading="Results">
               {results.map((r) => (
                 <CommandItem
                   key={r.slug}
@@ -162,5 +164,26 @@ export function SearchCommandBox() {
         </CommandList>
       </Command>
     </div>
+  );
+}
+
+// BẢN MỚI: Đã mở khóa Dialog và bỏ cái <a> redirect sang tab mới
+export function SearchDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hidden sm:flex rounded-lg bg-neutral-950 border border-white/15 hover:bg-neutral-900"
+          aria-label="Search"
+        >
+          <SearchIcon size={18} />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-lg p-0 border border-white/10 bg-neutral-950">
+        <SearchCommandBox />
+      </DialogContent>
+    </Dialog>
   );
 }
