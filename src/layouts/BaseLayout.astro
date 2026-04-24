@@ -5,6 +5,8 @@ import Header from "../components/core/Header.astro";
 import { SITE_DESCRIPTION } from "../consts.ts";
 import StickyButtons from "../components/global/StickyButtons.astro";
 import config from "@shConfig";
+// 1. Import Router để nhạc không bị ngắt
+import { ClientRouter } from "astro:transitions"; 
 
 import "../styles/global.css";
 import "../styles/view-transitions.css";
@@ -22,6 +24,7 @@ const { title, description, coverImage } = Astro.props;
       image={coverImage}
     />
     <slot name="head" />
+    <ClientRouter />
   </head>
   <body class="flex min-h-screen flex-col bg-neutral-950 text-neutral-50">
     <Header />
@@ -37,7 +40,6 @@ const { title, description, coverImage } = Astro.props;
   html {
     scroll-behavior: smooth;
   }
-  /* Fix layout cho main content */
   body {
     overflow-x: hidden;
   }

@@ -150,3 +150,10 @@ body {
 ::selection {
   @apply bg-white/20 text-white;
 }
+/* Style lại thẻ <mark> (vùng highlight) trong kết quả tìm kiếm */
+mark {
+  background-color: rgba(139, 92, 246, 0.3) !important; /* Đen highlight tím */
+  color: #fff !important;
+  border-radius: 2px;
+  padding: 0 2px;
+}
