@@ -13,7 +13,7 @@ import {
 } from "@ui/pagination.tsx";
 
 // Lưu ý: Nếu bạn muốn ảnh Template làm mặc định, hãy sửa trực tiếp ở đây
-const FALLBACK_IMAGE = "/assets/blog/BlogImageTemplate.jpg";
+const FALLBACK_IMAGE = "/assets/blog/orange.jpg";
 
 type Post = {
   id: string;

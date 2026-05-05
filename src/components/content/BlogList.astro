@@ -21,7 +21,7 @@ const allPosts = propsPosts || (
 // FIX LOGIC SERIALIZATION TẠI ĐÂY
 const serializedPosts = allPosts.map((post: any) => {
   // Bóc tách heroImage: Nếu là object thì lấy .src, nếu là string thì lấy luôn, nếu không có thì lấy Template
-  let finalImage = "/assets/blog/BlogImageTemplate.jpg";
+  let finalImage = "/assets/blog/orange.jpg";
   
   if (post.data.heroImage) {
     if (typeof post.data.heroImage === 'string') {

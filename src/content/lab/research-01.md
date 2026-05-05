@@ -2,7 +2,7 @@
 title: "CVE-2026-X: Analyzing Pre-Auth Remote Code Execution"
 description: "A deep dive into a hypothetical heap overflow vulnerability found during research in the Lab. This post explores memory corruption and exploit stability."
 pubDate: 2026-04-21
-heroImage: /assets/blog/BlogImageTemplate.jpg
+heroImage: /assets/blog/orange.jpg
 tags:
   - CVE
   - Pwnable

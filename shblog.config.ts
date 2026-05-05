@@ -8,7 +8,7 @@ const config = defineConfig({
 
   style: {
     heroImage: {
-      src: "/assets/layouts/homepage/homepage.webp", 
+      src: "/assets/layouts/homepage/theme2.jpg", 
       method: "overlay",
       from: 50,
       to: 80,
@@ -23,7 +23,7 @@ const config = defineConfig({
   pages: {
     home: {
       title: "@hxnguyez。",
-      heroImage: "/assets/layouts/homepage/homepage.webp",
+      heroImage: "/assets/layouts/homepage/theme2.jpg",
       greetings: [
         { begin: 0, finish: 6, text: "sleeping..." },
         { begin: 6, finish: 12, text: "have a good day!" },
@@ -33,9 +33,9 @@ const config = defineConfig({
       ],
     },
     other: {
-      about: { title: "About Me", subTitle: "Something about chillfish", heroImage: "/assets/layouts/homepage/homepage.webp" },
-      search: { title: "Search Results", subTitle: "Find my research", heroImage: "/assets/layouts/homepage/homepage.webp" },
-      lab: { title: "My study Lab", subTitle: "Showcase", heroImage: "/assets/layouts/homepage/homepage.webp" }
+      about: { title: "About Me", subTitle: "Something about chillfish", heroImage: "/assets/layouts/homepage/theme2.jpg" },
+      search: { title: "Search Results", subTitle: "Find my research", heroImage: "/assets/layouts/homepage/theme2.jpg" },
+      lab: { title: "My study Lab", subTitle: "Showcase", heroImage: "/assets/layouts/homepage/theme2.jpg" }
     }
   },
 

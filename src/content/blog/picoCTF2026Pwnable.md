@@ -2,7 +2,7 @@
 title: picoCTF 2026 - Pwnable
 description: Writeup for the picoCTF 2026 Pwnable challenges
 pubDate: April 23 2026
-heroImage: /assets/layouts/homepage/homepage.webp
+heroImage: /assets/layouts/homepage/theme2.jpg
 category: ["CTF Writeup"]
 tags: ["Writeup", "CTF", "Binary Exploitation"]
 draft: false
