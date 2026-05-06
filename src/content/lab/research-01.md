@@ -8,7 +8,7 @@ tags:
   - ndays
   - RCE
 category: ["ndays Research"]
-draft: false
+draft: true
 ---
 
 # **1. Tác dụng của các file:**
