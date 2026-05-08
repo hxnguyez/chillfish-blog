@@ -8,37 +8,38 @@ import Sidebar from "@components/Sidebar.astro";
 import TimelineSinglePost from "@ui/timeline/TimelineSinglePost.astro";
 import config from "@shConfig";
 
-// 1. Lấy dữ liệu
 const allLogs = await getCollection("wip", ({ data }) => {
   if (import.meta.env.DEV) return true;
   return data.draft !== true;
 });
 
-// 2. Lấy năm từ URL (Server-side)
-const url = new URL(Astro.request.url);
-const selectedYear = Number(url.searchParams.get("year")) || 2026;
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+const years = [2027, 2026];
 
-const years = [2027, 2026]; 
+// Hàm bổ trợ để tạo Grid dữ liệu cho từng năm
+function getYearGridData(year: number) {
+  const startDate = new Date(year, 0, 1);
+  const startDayOfWeek = startDate.getDay();
+  const diff = startDate.getDate() - startDayOfWeek + (startDayOfWeek === 0 ? -6 : 1);
+  const calendarStart = new Date(startDate.setDate(diff));
+  
+  const days = Array.from({ length: 371 }, (_, i) => {
+    const d = new Date(calendarStart);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
 
-const yearLogs = allLogs.filter(log => new Date(log.data.pubDate).getFullYear() === selectedYear);
-const sortedLogs = yearLogs.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const yearLogs = allLogs.filter(log => new Date(log.data.pubDate).getFullYear() === year);
+  const logCounts = yearLogs.reduce((acc: any, log) => {
+    const dateKey = new Date(log.data.pubDate).toISOString().split('T')[0];
+    acc[dateKey] = (acc[dateKey] || 0) + 1;
+    return acc;
+  }, {});
 
-// 3. Grid Logic (Sẽ được render lại hoàn toàn khi URL thay đổi nhờ data-astro-reload)
-const startDate = new Date(selectedYear, 0, 1);
-const startDayOfWeek = startDate.getDay(); 
-const diff = startDate.getDate() - startDayOfWeek + (startDayOfWeek === 0 ? -6 : 1);
-const calendarStart = new Date(startDate.setDate(diff));
-const days = Array.from({ length: 371 }, (_, i) => {
-  const d = new Date(calendarStart);
-  d.setDate(d.getDate() + i);
-  return d;
-});
-
-const logCounts = yearLogs.reduce((acc: any, log) => {
-  const d = new Date(log.data.pubDate).toISOString().split('T')[0];
-  acc[d] = (acc[d] || 0) + 1;
-  return acc;
-}, {});
+  return { days, logCounts, yearLogs };
+}
 
 const pageConfig = config.pages.other?.wip || {
   title: "Work In Progress",
@@ -60,53 +61,58 @@ const { title, subTitle, heroImage } = pageConfig;
     <div class="flex-1">
       <div class="mb-10 rounded-xl border border-[#30363d] bg-[#0d1117] p-6 shadow-sm">
         <div class="mb-6 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Activity History</h3>
-          </div>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Activity History</h3>
           
+          {/* TAB BUTTONS: Điều khiển chuyển năm */}
           <div class="flex bg-[#161b22] p-1 rounded-lg border border-[#30363d]">
             {years.map((y) => (
-              <a 
-                href={`/wip/?year=${y}`} 
-                data-astro-reload 
-                class={`px-4 py-1 text-xs font-bold rounded-md transition-all ${y === selectedYear ? 'bg-[#21262d] text-white border border-[#30363d]' : 'text-[#8b949e] hover:text-white'}`}
+              <button 
+                data-year-target={y}
+                class={`year-btn px-4 py-1 text-xs font-bold rounded-md transition-all ${y === currentYear ? 'bg-[#21262d] text-white border border-[#30363d]' : 'text-[#8b949e] hover:text-white cursor-pointer'}`}
               >
                 {y}
-              </a>
+              </button>
             ))}
           </div>
         </div>
         
-        <div class="w-full overflow-hidden">
-          <div class="grid grid-rows-7 grid-flow-col gap-[2px] w-max relative isolation-isolate" id="contribution-grid">
-            {days.map((date) => {
-              const dateStr = date.toISOString().split('T')[0];
-              const count = logCounts[dateStr] || 0;
-              const isCurrentYear = date.getFullYear() === selectedYear;
-              const tooltipDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        {/* RENDER CẢ 2 GRID CÙNG LÚC */}
+        {years.map((y) => {
+          const { days, logCounts } = getYearGridData(y);
+          return (
+            <div id={`grid-${y}`} class={`year-grid-content w-full overflow-hidden ${y === currentYear ? 'block' : 'hidden'}`}>
+              <div class="grid grid-rows-7 grid-flow-col gap-[2px] w-max relative isolation-isolate" id="contribution-grid">
+                {days.map((date) => {
+                  const dateStr = date.toISOString().split('T')[0];
+                  const count = logCounts[dateStr] || 0;
+                  const isCurrentYear = date.getFullYear() === y;
+                  const tooltipDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-              return (
-                <div
-                  data-date={dateStr}
-                  class={`h-[11px] w-[11px] rounded-[1.5px] transition-all relative group/item
-                    ${!isCurrentYear ? 'opacity-0 pointer-events-none' : ''}
-                    ${count > 0 ? 'bg-[#39d353] shadow-[0_0_8px_rgba(57,211,83,0.4)] cursor-pointer hover:scale-110' : 'bg-[#161b22] pointer-events-none'}
-                  `}
-                >
-                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#6e7681] text-white text-[10px] rounded pointer-events-none opacity-0 group-hover/item:opacity-100 transition-opacity whitespace-nowrap z-[100] shadow-xl">
-                    {count} contribution{count > 1 ? 's' : ''} on {tooltipDate}
-                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#6e7681]"></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div class="mt-4 flex justify-between text-[9px] text-[#484f58] font-mono w-full px-1 uppercase opacity-60">
-            {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, index) => (
-              <span class="month-label cursor-pointer hover:text-green-500 transition-colors" data-month={index}>{m}</span>
-            ))}
-          </div>
-        </div>
+                  return (
+                    <div
+                      data-date={dateStr}
+                      data-month={date.getMonth()}
+                      class={`h-3 w-3 rounded-[1.5px] transition-all relative group/item
+                        ${!isCurrentYear ? 'opacity-0 pointer-events-none' : ''}
+                        ${count > 0 ? 'bg-[#39d353] shadow-[0_0_8px_rgba(57,211,83,0.4)] cursor-pointer hover:scale-110' : 'bg-[#161b22] pointer-events-none'}
+                      `}
+                    >
+                      <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#6e7681] text-white text-[10px] rounded pointer-events-none opacity-0 group-hover/item:opacity-100 transition-opacity whitespace-nowrap z-[100] shadow-xl">
+                        {count} contributions on {tooltipDate}
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#6e7681]"></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div class="mt-4 flex justify-between text-[9px] text-[#484f58] font-mono w-full px-1 uppercase opacity-60">
+                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, index) => (
+                  <span class="month-label cursor-pointer hover:text-green-500 transition-colors" data-year={y} data-month={index}>{m}</span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div class="mb-8 flex items-center justify-between border-b border-[#30363d] pb-4">
@@ -115,94 +121,110 @@ const { title, subTitle, heroImage } = pageConfig;
       </div>
 
       <div id="logs-list" class="space-y-2">
-        {sortedLogs.length > 0 ? sortedLogs.map((post) => {
+        {allLogs.sort((a,b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).map((post) => {
           const dateObj = new Date(post.data.pubDate);
           const dateStr = dateObj.toISOString().split('T')[0];
           const displayDate = dateObj.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-');
           
           return (
-            <div class="log-item group relative flex items-center gap-4 pl-4 transition-all hover:bg-[#161b22]/50 rounded-xl border border-transparent hover:border-[#30363d] p-2" data-date={dateStr} data-month={dateObj.getMonth()}>
+            <div class="log-item group relative flex items-center gap-4 pl-4 transition-all hover:bg-[#161b22]/50 rounded-xl border border-transparent hover:border-[#30363d] p-2" 
+              data-date={dateStr} 
+              data-month={dateObj.getMonth()}
+              data-year={dateObj.getFullYear()}
+            >
                <span class="text-[10px] font-mono text-[#484f58] min-w-[40px]">[{displayDate}]</span>
-               <div class={`h-2.5 w-2.5 rounded-full shrink-0 ${post === sortedLogs[0] ? 'bg-green-500 ring-4 ring-green-500/20' : 'bg-[#30363d]'}`}></div>
+               <div class={`h-2.5 w-2.5 rounded-full shrink-0 ${dateObj.toDateString() === now.toDateString() ? 'bg-green-500 ring-4 ring-green-500/20' : 'bg-[#30363d]'}`}></div>
                <TimelineSinglePost postData={post} postTags={post.data.tags || []} />
             </div>
           );
-        }) : (
-          <div class="py-10 text-center text-gray-500 italic text-sm">No signals found for this period.</div>
-        )}
+        })}
       </div>
     </div>
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]"><Sidebar /></aside>
   </BaseMainContent>
 </BaseLayout>
 
-<script is:inline>
-  function initWipFilters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedYear = parseInt(urlParams.get('year')) || 2026;
-    const currentMonth = new Date().getMonth();
-
-    const gridItems = document.querySelectorAll('#contribution-grid div[data-date]');
-    const monthLabels = document.querySelectorAll('.month-label');
+<script is:inline define:vars={{ currentMonth, currentYear }}>
+  function initWipTabs() {
+    const yearBtns = document.querySelectorAll('.year-btn');
+    const grids = document.querySelectorAll('.year-grid-content');
     const logItems = document.querySelectorAll('.log-item');
-    const logTitle = document.querySelector('#log-title');
-    const resetBtn = document.querySelector('#reset-filter');
+    const logTitle = document.getElementById('log-title');
+    const resetBtn = document.getElementById('reset-filter');
+    
+    let activeYear = currentYear;
 
-    const filterByMonth = (month) => {
-      logItems.forEach(log => {
-        log.style.display = parseInt(log.dataset.month) === month ? 'flex' : 'none';
+    function updateView(year, month = null) {
+      // 1. Switch Year Buttons
+      yearBtns.forEach(btn => {
+        if (parseInt(btn.dataset.yearTarget) === year) {
+          btn.classList.add('bg-[#21262d]', 'text-white', 'border', 'border-[#30363d]');
+          btn.classList.remove('text-[#8b949e]');
+        } else {
+          btn.classList.remove('bg-[#21262d]', 'text-white', 'border', 'border-[#30363d]');
+          btn.classList.add('text-[#8b949e]');
+        }
       });
-      if (logTitle) {
-        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        logTitle.innerText = `${monthNames[month]} ${selectedYear}`;
-      }
-    };
 
-    // Mặc định filter tháng hiện tại cho năm 2026
-    if (selectedYear === 2026) {
-        filterByMonth(currentMonth);
-    } else {
-        filterByMonth(0); 
+      // 2. Switch Grids
+      grids.forEach(g => g.classList.toggle('hidden', g.id !== `grid-${year}`));
+
+      // 3. Filter Logs
+      logItems.forEach(log => {
+        const yMatch = parseInt(log.dataset.year) === year;
+        const mMatch = month === null || parseInt(log.dataset.month) === month;
+        log.style.display = (yMatch && mMatch) ? 'flex' : 'none';
+      });
+
+      // 4. Update Title
+      if (logTitle) {
+        if (month !== null) {
+          const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          logTitle.innerText = `${names[month]} ${year}`;
+        } else {
+          logTitle.innerText = `Logs of ${year}`;
+        }
+      }
     }
 
-    gridItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const selectedDate = item.dataset.date;
-        logItems.forEach(log => {
-          log.style.display = log.dataset.date === selectedDate ? 'flex' : 'none';
-        });
-        if (logTitle) logTitle.innerText = `Logs for ${selectedDate}`;
+    // Event: Click Year Tab
+    yearBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeYear = parseInt(btn.dataset.yearTarget);
+        updateView(activeYear, activeYear === currentYear ? currentMonth : null);
       });
     });
 
-    monthLabels.forEach(label => {
-      label.addEventListener('click', () => filterByMonth(parseInt(label.dataset.month)));
+    // Event: Click Month Label
+    document.querySelectorAll('.month-label').forEach(label => {
+      label.addEventListener('click', () => {
+        updateView(parseInt(label.dataset.year), parseInt(label.dataset.month));
+      });
     });
 
-    resetBtn?.addEventListener('click', () => {
-      logItems.forEach(log => log.style.display = 'flex');
-      if (logTitle) logTitle.innerText = `Logs of ${selectedYear}`;
+    // Event: Click Square
+    document.querySelectorAll('[data-date]').forEach(sq => {
+      sq.addEventListener('click', () => {
+        const d = sq.dataset.date;
+        logItems.forEach(log => log.style.display = log.dataset.date === d ? 'flex' : 'none');
+        if (logTitle) logTitle.innerText = `Logs for ${d}`;
+      });
     });
+
+    resetBtn?.addEventListener('click', () => updateView(activeYear));
+
+    // Khởi tạo mặc định
+    updateView(currentYear, currentMonth);
   }
 
-  // Chạy sau khi swap nội dung và load lần đầu
-  document.addEventListener('astro:after-swap', initWipFilters);
-  initWipFilters();
+  document.addEventListener('astro:page-load', initWipTabs);
+  initWipTabs();
 </script>
 
 <style>
-  .overflow-hidden {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .overflow-hidden::-webkit-scrollbar {
-    display: none;
-  }
-  #contribution-grid {
-    isolation: isolate;
-  }
-  .group\/item:hover {
-    z-index: 50;
-  }
+  .overflow-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+  .overflow-hidden::-webkit-scrollbar { display: none; }
+  #contribution-grid { isolation: isolate; }
+  .group\/item:hover { z-index: 50; }
   .log-item :global(a) { padding: 0.5rem !important; }
 </style>
