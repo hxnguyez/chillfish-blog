@@ -1,0 +1,130 @@
+---
+import { getCollection } from "astro:content";
+import { sortByDate } from "../../lib/sortByDate";
+import { slugTag } from "../../lib/tag";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SITE_TITLE } from "@/consts";
+import config from "@shConfig";
+import Hero from "@components/content/Home/Hero.astro";
+import { HeroTitle, HeroSubtitle } from "@components/content/Home/HeroItems";
+import BaseMainContent from "@/layouts/BaseMainContent.astro";
+import Sidebar from "@components/Sidebar.astro";
+import TimelineSinglePost from "@ui/timeline/TimelineSinglePost.astro";
+
+export async function getStaticPaths() {
+  const collectionNames = ["blog", "lab", "research"] as const;
+  const posts = (
+    await Promise.all(
+      collectionNames.map((collectionName) =>
+        getCollection(collectionName, ({ data }) => {
+          if (import.meta.env.DEV) return true;
+          return data.draft !== true;
+        }),
+      ),
+    )
+  ).flat();
+
+  const tagsMap = new Map<string, string>();
+
+  posts
+    .flatMap((post: any) => post.data.tags || [])
+    .forEach((tag: string) => {
+      const slug = slugTag(tag);
+      if (slug && !tagsMap.has(slug)) {
+        tagsMap.set(slug, tag);
+      }
+    });
+
+  return Array.from(tagsMap.entries()).map(([slug, tag]) => ({
+    params: { tag: slug },
+    props: {
+      tag,
+      posts: sortByDate(
+        posts.filter((post: any) =>
+          post.data.tags?.some((postTag: string) => slugTag(postTag) === slug),
+        ),
+      ),
+    },
+  }));
+}
+
+const { posts, tag } = Astro.props as any;
+
+const postsByYear = posts.reduce((acc: any, post: any) => {
+  const year = new Date(post.data.pubDate).getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {});
+
+const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+---
+
+<BaseLayout
+  title={`Tag: ${tag} ${config.style.titleSeparator} ${SITE_TITLE}`}
+  description={`List of articles tagged with ${tag}`}
+>
+  <Hero>
+    <div class="lg:col-span-2" slot="left">
+      <HeroTitle>#{tag}</HeroTitle>
+      <HeroSubtitle slot="right">
+        All posts tagged with {tag} across the site.
+      </HeroSubtitle>
+    </div>
+  </Hero>
+
+  <BaseMainContent>
+    <div class="flex-1 min-w-0">
+      <div class="space-y-8">
+        {
+          years.map((year) => {
+            const yearPosts = postsByYear[year];
+            return (
+              <div class="relative">
+                <div class="mb-6 flex items-center gap-4">
+                  <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+                    {year}
+                  </h2>
+                  <div class="flex items-center gap-2">
+                    <div class="h-3 w-3 rounded-full bg-blue-500" />
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      {yearPosts.length} {yearPosts.length > 1 ? 'Posts' : 'Post'}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="relative border-l-2 border-gray-200 pl-8 dark:border-gray-700">
+                  {yearPosts.map((post: any) => {
+                    const month = new Date(post.data.pubDate)
+                      .toLocaleDateString(config.lang || "en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
+                      .replace("/", "-");
+                    const postTags = post.data.tags || [];
+
+                    return (
+                      <div class="group relative mb-8">
+                        <div class="absolute top-1 -left-9.75 h-3 w-3 rounded-full bg-gray-400 transition-colors group-hover:bg-blue-500 dark:bg-gray-600" />
+                        <div class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          {month}
+                        </div>
+                        <TimelineSinglePost postData={post} postTags={postTags} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <aside class="w-full shrink-0 lg:w-80">
+      <Sidebar />
+    </aside>
+  </BaseMainContent>
+</BaseLayout>

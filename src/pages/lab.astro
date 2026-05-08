@@ -8,21 +8,21 @@ import BaseMainContent from "@/layouts/BaseMainContent.astro";
 import { HeroSubtitle, HeroTitle } from "@components/content/Home/HeroItems";
 import config from "@shConfig";
 
-// Dùng try-catch để tránh lỗi build khi thư mục chưa có bài viết (Markdown) nào
-let labPosts = [];
-let researchPosts = [];
+const labPosts = await getCollection("lab", ({ data }) => {
+  if (import.meta.env.DEV) return true;
+  return data.draft !== true;
+});
 
-try {
-  labPosts = await getCollection("lab", ({ data }) => import.meta.env.DEV ? true : data.draft !== true);
-  labPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-} catch (e) {}
+const researchPosts = await getCollection("research", ({ data }) => {
+  if (import.meta.env.DEV) return true;
+  return data.draft !== true;
+});
+console.log("👉 [DEBUG] Số bài viết trong Research:", researchPosts.length);
+console.log("👉 [DEBUG] Số bài viết trong Lab:", labPosts.length);
 
-try {
-  researchPosts = await getCollection("research", ({ data }) => import.meta.env.DEV ? true : data.draft !== true);
-  researchPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-} catch (e) {}
+labPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+researchPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Lấy bài mới nhất của Research (ưu tiên) hoặc Lab để ghim
 const featuredLab = researchPosts[0] || labPosts[0];
 const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
 const { title, subTitle, heroImage } = config.pages.other.lab;
@@ -67,27 +67,41 @@ const { title, subTitle, heroImage } = config.pages.other.lab;
   <BaseMainContent>
     <div class="flex-1" data-pagefind-body transition:name="main-content">
       
-      <div class="mb-8 flex space-x-8 border-b border-white/10 pb-3">
-        <button id="btn-research" class="text-2xl font-bold text-white border-b-2 border-white pb-1 transition-all cursor-pointer">Research</button>
-        <button id="btn-lab" class="text-2xl font-bold text-white/50 border-b-2 border-transparent pb-1 transition-all hover:text-white/80 cursor-pointer">Lab (Tools)</button>
+      <div class="mb-8 flex items-center justify-between border-b border-[#30363d] pb-4">
+        <div class="inline-flex p-1 bg-[#161b22] border border-[#30363d] rounded-lg">
+          <button 
+            id="btn-research" 
+            class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all cursor-pointer bg-[#21262d] text-white shadow-sm border border-[#30363d]"
+          >
+            Research
+          </button>
+          <button 
+            id="btn-lab" 
+            class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all cursor-pointer text-[#8b949e] border border-transparent hover:text-white"
+          >
+            Lab
+          </button>
+        </div>
       </div>
 
-      <div id="content-research" class="block animate-fade-in">
+      <div id="content-research" class="animate-fade-in" style="display: block;">
         {researchPosts.length > 0 ? (
-          <BlogList posts={researchPosts} collection="research" currentPage={currentPage} />
+          <BlogList posts={researchPosts} collection="research" />
         ) : (
-          <div class="rounded-xl border border-dashed border-white/20 bg-black/20 p-12 text-center text-white/40">
-            Where is the post? <br/><span class="text-sm">Hacking in progress...</span>
+          <div class="rounded-xl border border-[#30363d] bg-[#0d1117] p-12 text-center text-[#8b949e]">
+            <p class="text-sm font-medium">Where is the post?</p>
+            <p class="text-xs mt-1">Hacking in progress...</p>
           </div>
         )}
       </div>
 
-      <div id="content-lab" class="hidden animate-fade-in">
+      <div id="content-lab" class="animate-fade-in" style="display: none;">
         {labPosts.length > 0 ? (
-          <BlogList posts={labPosts} collection="lab" currentPage={currentPage} />
+          <BlogList posts={labPosts} collection="lab" />
         ) : (
-          <div class="rounded-xl border border-dashed border-white/20 bg-black/20 p-12 text-center text-white/40">
-            Where is the post? <br/><span class="text-sm">Setting up the lab...</span>
+          <div class="rounded-xl border border-[#30363d] bg-[#0d1117] p-12 text-center text-[#8b949e]">
+            <p class="text-sm font-medium">Where is the post?</p>
+            <p class="text-xs mt-1">Setting up the lab...</p>
           </div>
         )}
       </div>
@@ -101,47 +115,50 @@ const { title, subTitle, heroImage } = config.pages.other.lab;
 </BaseLayout>
 
 <script>
-  // Script xử lý chuyển Tab có hỗ trợ ViewTransitions của Astro
   function setupTabs() {
     const btnResearch = document.getElementById('btn-research');
     const btnLab = document.getElementById('btn-lab');
     const contentResearch = document.getElementById('content-research');
     const contentLab = document.getElementById('content-lab');
 
-    if (!btnResearch || !btnLab) return;
+    if (!btnResearch || !btnLab || !contentResearch || !contentLab) return;
 
-    btnResearch.addEventListener('click', () => {
-      contentResearch.classList.remove('hidden');
-      contentResearch.classList.add('block');
-      contentLab.classList.add('hidden');
-      contentLab.classList.remove('block');
-      
-      btnResearch.classList.add('text-white', 'border-white');
-      btnResearch.classList.remove('text-white/50', 'border-transparent');
-      
-      btnLab.classList.remove('text-white', 'border-white');
-      btnLab.classList.add('text-white/50', 'border-transparent');
-    });
+    const activeClasses = ['bg-[#21262d]', 'text-white', 'shadow-sm', 'border-[#30363d]'];
+    const inactiveClasses = ['text-[#8b949e]', 'border-transparent', 'hover:text-white'];
 
-    btnLab.addEventListener('click', () => {
-      contentLab.classList.remove('hidden');
-      contentLab.classList.add('block');
-      contentResearch.classList.add('hidden');
-      contentResearch.classList.remove('block');
+    function showResearch() {
+      contentResearch.style.display = 'block';
+      contentLab.style.display = 'none';
       
-      btnLab.classList.add('text-white', 'border-white');
-      btnLab.classList.remove('text-white/50', 'border-transparent');
+      btnResearch.classList.add(...activeClasses);
+      btnResearch.classList.remove(...inactiveClasses);
       
-      btnResearch.classList.remove('text-white', 'border-white');
-      btnResearch.classList.add('text-white/50', 'border-transparent');
-    });
+      btnLab.classList.remove(...activeClasses);
+      btnLab.classList.add(...inactiveClasses);
+    }
+
+    function showLab() {
+      contentLab.style.display = 'block';
+      contentResearch.style.display = 'none';
+      
+      btnLab.classList.add(...activeClasses);
+      btnLab.classList.remove(...inactiveClasses);
+      
+      btnResearch.classList.remove(...activeClasses);
+      btnResearch.classList.add(...inactiveClasses);
+    }
+
+    btnResearch.addEventListener('click', showResearch);
+    btnLab.addEventListener('click', showLab);
+
+    // Set initial state
+    showResearch();
   }
 
-  // Lắng nghe sự kiện để script chạy đúng mỗi khi chuyển trang
   document.addEventListener('astro:page-load', setupTabs);
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setupTabs();
-  } else {
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupTabs);
+  } else {
+    setupTabs();
   }
 </script>

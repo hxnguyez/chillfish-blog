@@ -1,0 +1,71 @@
+---
+interface Props {
+  logs: any[];
+  year: number;
+}
+
+const { logs, year } = Astro.props;
+
+// 1. Tạo mảng chứa tất cả các ngày trong năm được chọn
+const startDate = new Date(year, 0, 1);
+const endDate = new Date(year, 11, 31);
+const daysInYear = [];
+let currentDate = new Date(startDate);
+
+while (currentDate <= endDate) {
+  daysInYear.push(new Date(currentDate));
+  currentDate.setDate(currentDate.getDate() + 1);
+}
+
+// 2. Lấy danh sách các ngày có bài đăng (định dạng YYYY-MM-DD để so sánh)
+const activeDays = new Set(
+  logs.map(log => new Date(log.data.pubDate).toISOString().split('T')[0])
+);
+
+// 3. Nhóm các ngày theo tháng để hiển thị nhãn (Jan, Feb...)
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+---
+
+<div class="contribution-container select-none">
+  <div class="grid-wrapper overflow-x-auto pb-2 custom-scrollbar">
+    <div class="flex flex-wrap gap-[3px] min-w-[700px]">
+      {daysInYear.map((date) => {
+        const dateStr = date.toISOString().split('T')[0];
+        const isActive = activeDays.has(dateStr);
+        const isToday = new Date().toISOString().split('T')[0] === dateStr;
+
+        return (
+          <div
+            title={`${dateStr}${isActive ? ' (Activity recorded)' : ''}`}
+            class={`h-3 w-3 rounded-[2px] transition-all duration-300 cursor-pointer
+              ${isActive 
+                ? 'bg-[#39d353] shadow-[0_0_8px_rgba(57,211,83,0.4)]' 
+                : 'bg-[#161b22] border border-[#30363d] hover:border-[#444c56]'}
+              ${isToday ? 'ring-1 ring-blue-500 ring-offset-1 ring-offset-[#0d1117]' : ''}
+            `}
+            data-date={dateStr}
+          ></div>
+        );
+      })}
+    </div>
+  </div>
+  
+  <div class="mt-4 flex flex-wrap gap-4 text-[10px] text-[#8b949e] font-mono">
+    {months.map((m, i) => (
+      <span class="opacity-50">{m}</span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #0d1117;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 10px;
+  }
+</style>

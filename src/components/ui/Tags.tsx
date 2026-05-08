@@ -3,19 +3,21 @@
 import { Hash, MoreHorizontal } from "lucide-react";
 import { Badge } from "./badge";
 import { Tooltip, TooltipTrigger, TooltipContent } from "./tooltip";
+import { slugTag } from "@lib/tag";
 
 interface TagsProps {
   tags?: string[] | null;
+  collection?: "blog" | "lab" | "research";
 }
 
-export default function Tags({ tags }: TagsProps) {
+export default function Tags({ tags, collection = "blog" }: TagsProps) {
   if (!tags || tags.length === 0) return null;
 
   const [first, ...rest] = tags;
 
   return (
     <div className="tags-list flex items-center gap-2">
-      <a href={`/blog/tags/${first.toLowerCase()}`} className="tag-link">
+      <a href={`/tags/${slugTag(first)}`} className="tag-link">
         <Badge variant="secondary" className="px-2 text-sm">
           <Hash size={14} />
           {first}
@@ -43,7 +45,7 @@ export default function Tags({ tags }: TagsProps) {
               {rest.map((tag) => (
                 <a
                   key={tag}
-                  href={`/blog/tags/${tag.toLowerCase()}`}
+                  href={`/tags/${slugTag(tag)}`}
                   className="inline-flex"
                 >
                   <Badge variant="secondary" className="px-2 text-sm">

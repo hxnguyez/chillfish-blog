@@ -32,6 +32,7 @@ interface Props {
   pubDate: Date;
   updatedDate?: Date;
   heroImage?: any;
+  collection?: "blog" | "lab" | "research";
   headings: Array<{
     depth: number;
     slug: string;
@@ -40,7 +41,7 @@ interface Props {
   tags?: CollectionEntry<"blog">["data"]["tags"];
 }
 
-const { title, description, pubDate, updatedDate, heroImage, headings, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, collection = "blog", headings, tags } = Astro.props;
 ---
 
 <BaseLayout
@@ -94,9 +95,9 @@ const { title, description, pubDate, updatedDate, heroImage, headings, tags } = 
         {/* Tags Section */}
         {tags && tags.length > 0 && (
           <div class="mb-6 flex items-center gap-2" data-pagefind-ignore>
-            <Tag size={18} class="text-gray-500" />
+            <Tag size={18} className="text-gray-500" />
             <span class="text-sm text-gray-500">{i18n(I18nKey.post_tags)}:</span>
-            <Tags tags={tags} />
+            <Tags tags={tags} collection={collection} />
           </div>
         )}
       </div>

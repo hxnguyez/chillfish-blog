@@ -5,18 +5,19 @@ import config from "@shConfig";
 
 interface Props {
   posts?: any[];
-  collection?: "blog" | "lab";
+  collection?: "blog" | "lab" | "research";
 }
 
 const { posts: propsPosts, collection = "blog" } = Astro.props;
 const postsPerPage = config.style.postsPerPage || 6;
+const typedCollection = collection as "blog" | "lab" | "research";
 
 const allPosts = propsPosts || (
-  await getCollection(collection as any, ({ data }: any) => {
+  await getCollection(typedCollection, ({ data }: any) => {
     if (import.meta.env.DEV) return true;
     return data.draft !== true;
   })
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+).sort((a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // FIX LOGIC SERIALIZATION TẠI ĐÂY
 const serializedPosts = allPosts.map((post: any) => {
@@ -50,5 +51,6 @@ const serializedPosts = allPosts.map((post: any) => {
 <BlogListClient
   client:load
   posts={serializedPosts}
+  collection={collection}
   postsPerPage={postsPerPage}
 />

@@ -1,0 +1,11 @@
+---
+title: "Title here"
+description: "description"
+pubDate: year-month-day
+heroImage: "/assets/layouts/homepage/theme2.jpg"
+draft: false
+tags: ["Tag1", "Tag2"]
+category: "category"
+---
+
+Content...

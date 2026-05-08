@@ -29,9 +29,11 @@ type Post = {
 
 export default function BlogListClient({
   posts,
+  collection = "blog",
   postsPerPage = 6,
 }: {
   posts: Post[];
+  collection?: "blog" | "lab" | "research";
   postsPerPage?: number;
 }) {
   const parsedPosts = useMemo(() => {
@@ -98,8 +100,9 @@ export default function BlogListClient({
                 heroImage={post.data.heroImage || FALLBACK_IMAGE}
                 category={post.data.category}
                 tags={post.data.tags}
-                href={`/blog/${post.id}/`}
+                href={`/${collection}/${post.id}/`}
                 isLoading={false}
+                collection={collection}
               />
             ))}
           </div>

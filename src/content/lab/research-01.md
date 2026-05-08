@@ -1,14 +1,11 @@
 ---
 title: "Knowledge around CVE-2026-34159: llama.cpp"
-description: "Knowledge when I research a CVE with RCE vulnerablity in RPC Backend of an open source AI."
 pubDate: 2026-05-05
-heroImage: /assets/blog/orange.jpg
-tags:
-  - CVE
-  - ndays
-  - RCE
-category: ["ndays Research"]
-draft: true
+description: "Knowledge when I research a CVE with RCE vulnerablity in RPC Backend of an open source AI."
+heroImage: "/assets/blog/orange.jpg"
+draft: false
+tags: ["CVE", "ndays", "RCE"]
+category: "ndays Research"
 ---
 
 # **1. Tác dụng của các file:**

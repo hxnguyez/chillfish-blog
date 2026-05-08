@@ -23,7 +23,6 @@ const posts = (
   .slice(0, 6); // Lấy 6 bài mới nhất
 
 const featuredPost = posts[0];
-const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
 ---
 
 <BaseLayout
@@ -73,7 +72,7 @@ const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
 
   <BaseMainContent>
     <div class="flex-1" data-pagefind-body transition:name="main-content">
-      <BlogList currentPage={currentPage} />
+      <BlogList />
     </div>
 
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">

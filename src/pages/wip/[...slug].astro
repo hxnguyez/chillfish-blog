@@ -1,0 +1,33 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("wip", ({ data }) => {
+    if (import.meta.env.DEV) return true;
+    return data.draft !== true;
+  });
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<"wip">;
+
+const post = Astro.props;
+const { Content, headings } = await render(post);
+
+const ImagePacked = (await import("@components/markdown/ImagePacked.astro")).default;
+const BlockQuotePacked = (await import("@components/markdown/BlockQuotePacked.astro")).default;
+---
+
+<BlogPost {...post.data} headings={headings} collection="wip">
+  <Content
+    components={{
+      img: ImagePacked,
+      blockquote: BlockQuotePacked,
+    }}
+  />
+</BlogPost>

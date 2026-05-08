@@ -18,6 +18,7 @@ interface BlogCardProps {
   isLoading?: boolean;
   category: string | string[] | null;
   tags: string[] | null;
+  collection?: "blog" | "lab" | "research";
 }
 
 export default function BlogCard({
@@ -28,6 +29,7 @@ export default function BlogCard({
   href,
   category,
   tags,
+  collection = "blog",
   isLoading = false,
 }: BlogCardProps) {
   // TÍNH TOÁN NGAY LÚC RENDER ĐỂ SSR CÓ DỮ LIỆU LUÔN
@@ -135,7 +137,7 @@ export default function BlogCard({
                     onClick={handleCategoryClick}
                   >
                     <Tag size={16} />
-                    <Tags tags={tags} />
+                    <Tags tags={tags} collection={collection} />
                   </div>
                 )}
               </>
