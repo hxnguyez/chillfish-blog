@@ -2,38 +2,39 @@
 import config from "@shConfig";
 import AuthorCard from "./widgets/AuthorCard";
 import DiscordCard from "./widgets/DiscordCard";
+
+interface Props {
+  isPost?: boolean;
+}
+const { isPost = false } = Astro.props;
 ---
 
-<!-- Sidebar -->
-<div class="flex w-full flex-col gap-5" data-pagefind-ignore>
-  <!-- Author card -->
-  <AuthorCard
-    client:load
-    image={config.author.avatarUrl}
-    name={config.author.name}
-    slug={config.author.name.toLowerCase().replace(/\s+/g, "")}
-    description={config.author.bio}
-    links={config.author.links}
-    transition:name="sidebar"
-  />
+<div class="flex w-full flex-col gap-5 h-full" data-pagefind-ignore>
+  
+  {!isPost && (
+    <div class="flex flex-col gap-5 shrink-0">
+      <AuthorCard
+        client:load
+        image={config.author.avatarUrl}
+        name={config.author.name}
+        slug={config.author.name.toLowerCase().replace(/\s+/g, "")}
+        description={config.author.bio}
+        links={config.author.links}
+        transition:name="sidebar"
+      />
 
-  <!-- Discord cards -->
-  <a
-    href="https://discord.com/users/876338724890349569"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <DiscordCard
-      client:load
-      title="Discord"
-      subtitle="Connect with hxnguyez"
-      description="Drop me a DM if you have any questions about this blog, or just want to chat!"
-    />
-  </a>
+      <a href="https://discord.com/users/876338724890349569" target="_blank" rel="noopener noreferrer">
+        <DiscordCard
+          client:load
+          title="Discord"
+          subtitle="Connect with hxnguyez"
+          description="Drop me a DM if you have any questions about this blog, or just want to chat!"
+        />
+      </a>
+    </div>
+  )}
 
-  <!-- You can add more widgets here, we suggest adding a widget with the shadcn Card component like this: -->
-  <!-- <Card className="border border-white/10 rounded-[14px] p-5 relative overflow-hidden" /> -->
-
-  <!-- Never remove this slot, it's for the Table of Contents (ToC) - which will be sticky -->
-  <slot />
+  <div class="flex-1 overflow-y-auto pr-1 select-none">
+    <slot />
+  </div>
 </div>

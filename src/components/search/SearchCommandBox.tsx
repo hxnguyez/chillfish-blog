@@ -6,10 +6,11 @@ import {
   CommandItem,
   CommandList,
 } from "@ui/command";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@ui/button";
 import { SearchIcon } from "@ui/animated/search";
-import { Dialog, DialogTrigger, DialogContent } from "@ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@ui/dialog";
+import { TagIcon, FolderIcon } from "lucide-react";
 
 type SearchEntry = {
   title: string;
@@ -28,160 +29,184 @@ export function SearchCommandBox() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchEntry[]>([]);
   const [pagefindReady, setPagefindReady] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const debounceTimer = useRef<number | null>(null);
+  const [availableFilters, setAvailableFilters] = useState<{ [key: string]: any }>({});
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  // Khởi tạo Pagefind
   useEffect(() => {
     const initPagefind = async () => {
+      if (typeof window === "undefined") return;
       try {
-        let attempts = 0;
-        while (!window.pagefind && attempts < 30) {
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          attempts++;
-        }
-
-        if (!window.pagefind) {
-          setError("Pagefind not loaded. Please run pnpm build first.");
-          return;
-        }
-
-        await window.pagefind.init();
+        const dynamicImport = new Function('return import("/pagefind/pagefind.js")');
+        const pagefindModule = await dynamicImport();
+        await pagefindModule.init();
+        window.pagefind = pagefindModule;
+        
+        const filters = await pagefindModule.filters();
+        setAvailableFilters(filters || {});
         setPagefindReady(true);
-        setError(null);
       } catch (err) {
-        console.error("Pagefind init failed:", err);
-        setError("Failed to initialize search functionality.");
-        setPagefindReady(false);
+        console.error("Pagefind not found.");
       }
     };
-
     initPagefind();
   }, []);
 
-  const handleSearchChange = async (search: string) => {
-    if (debounceTimer.current) {
-      window.clearTimeout(debounceTimer.current);
-    }
+  useEffect(() => {
+    const performSearch = async () => {
+      if (!window.pagefind) return;
 
-    if (!search || !pagefindReady) {
-      setResults([]);
-      return;
-    }
+      const filters: any = {};
+      if (selectedCategory) filters.category = selectedCategory;
+      if (selectedTag) filters.tags = selectedTag;
 
-    debounceTimer.current = window.setTimeout(async () => {
-      try {
-        const searchResults = await window.pagefind.search(search);
+      const searchResults = await window.pagefind.search(query, {
+        filters: Object.keys(filters).length > 0 ? filters : undefined
+      });
 
-        if (!searchResults?.results) {
-          setResults([]);
-          return;
-        }
-
-        const formattedResults: SearchEntry[] = await Promise.all(
-          searchResults.results.slice(0, 10).map(async (result: any) => {
-            try {
-              const data = await result.data();
-              return {
-                title: data.meta?.title || data.title || "Untitled",
-                slug: result.id,
-                link: data.url || `/blog/${result.id}`,
-                description: data.excerpt || data.meta?.description,
-              };
-            } catch (err) {
-              console.error("Failed to parse search result:", err);
-              return null;
-            }
-          }),
+      if (searchResults?.results) {
+        const data = await Promise.all(
+          searchResults.results.slice(0, 10).map(async (r: any) => {
+            const res = await r.data();
+            return {
+              title: res.meta?.title || "Untitled",
+              slug: r.id,
+              link: res.url,
+              description: res.excerpt,
+            };
+          })
         );
-
-        setResults(formattedResults.filter(Boolean) as SearchEntry[]);
-      } catch (err) {
-        console.error("Pagefind search failed:", err);
+        setResults(data);
+      } else {
         setResults([]);
       }
-    }, 500);
-  };
+    };
+    
+    const timer = setTimeout(() => performSearch(), 200);
+    return () => clearTimeout(timer);
+  }, [query, selectedCategory, selectedTag, pagefindReady]);
 
   return (
-    <div>
-      <Command
-        filter={(value, search, keywords) => {
-          handleSearchChange(search);
-          const extendValue = value + " " + (keywords?.join(" ") || "");
-          if (extendValue.toLowerCase().includes(search.toLowerCase())) {
-            return 1;
-          }
-          return 0;
-        }}
-      >
+    <div className="flex flex-col bg-neutral-950 min-h-[400px]">
+      
+      {/* ========================================================
+          VƯỢT RÀO SHADCN: ĐẶT BỘ LỌC RA HẲN BÊN NGOÀI THẺ COMMAND
+          ======================================================== */}
+      <div className="px-4 py-4 border-b border-white/10 bg-neutral-900/60 z-10">
+        
+        {/* Lọc theo Category */}
+        <div className="mb-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <FolderIcon size={14} className="text-cyan-400 shrink-0" />
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setSelectedCategory(null)}
+              className={`px-3 py-1.5 rounded text-[10px] uppercase font-bold transition-all border ${!selectedCategory ? 'bg-cyan-500 text-black border-cyan-500' : 'bg-neutral-950 text-neutral-400 border-white/10 hover:border-cyan-500/50 hover:text-white'}`}
+            >
+              All Categories
+            </button>
+            
+            {/* Nếu có dữ liệu thì hiện, nếu không thì báo lỗi chưa Build */}
+            {availableFilters.category && Object.keys(availableFilters.category).length > 0 ? (
+              Object.keys(availableFilters.category).map(cat => (
+                <button 
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded text-[10px] uppercase font-bold whitespace-nowrap transition-all border ${selectedCategory === cat ? 'bg-cyan-500 text-black border-cyan-500' : 'bg-neutral-950 text-neutral-400 border-white/10 hover:text-white hover:border-cyan-500/50'}`}
+                >
+                  {cat}
+                </button>
+              ))
+            ) : (
+              <span className="text-[10px] text-red-400 italic px-2 py-1">Chưa có Data (Hãy chạy npm run build)</span>
+            )}
+          </div>
+        </div>
+
+        {/* Lọc theo Tag */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <TagIcon size={14} className="text-purple-400 shrink-0" />
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setSelectedTag(null)}
+              className={`px-3 py-1.5 rounded text-[10px] uppercase font-bold transition-all border ${!selectedTag ? 'bg-purple-500 text-white border-purple-500' : 'bg-neutral-950 text-neutral-400 border-white/10 hover:border-purple-500/50 hover:text-white'}`}
+            >
+              Any Tag
+            </button>
+
+            {/* Nếu có dữ liệu thì hiện, nếu không thì báo lỗi chưa Build */}
+            {availableFilters.tags && Object.keys(availableFilters.tags).length > 0 ? (
+              Object.keys(availableFilters.tags).slice(0, 10).map(tag => (
+                <button 
+                  key={tag}
+                  onClick={() => setSelectedTag(tag)}
+                  className={`px-3 py-1.5 rounded text-[10px] font-bold whitespace-nowrap transition-all border ${selectedTag === tag ? 'bg-purple-500 text-white border-purple-500' : 'bg-neutral-950 text-neutral-400 border-white/10 hover:text-white hover:border-purple-500/50'}`}
+                >
+                  #{tag}
+                </button>
+              ))
+            ) : (
+              <span className="text-[10px] text-red-400 italic px-2 py-1">Chưa có Data (Hãy chạy npm run build)</span>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* ======================================================== */}
+
+      {/* KHU VỰC COMMAND CỦA SHADCN */}
+      <Command shouldFilter={false} className="border-none bg-transparent flex-1">
         <CommandInput
-          placeholder="Search for writeups, posts, or keywords..."
+          placeholder="Type to search (e.g. Llama, Buffer Overflow...)"
           value={query}
           onValueChange={setQuery}
-          disabled={!pagefindReady}
+          className="h-14 border-none focus:ring-0 text-white"
         />
-        <CommandList>
-          {error && (
-            <div className="px-2 py-2 text-sm text-red-500">⚠️ {error}</div>
-          )}
 
-          {!pagefindReady && !error && (
-            <div className="text-muted-foreground px-2 py-2 text-sm">
-              Loading search engine...
+        <CommandList className="max-h-[350px] custom-scrollbar">
+          {!pagefindReady && (
+            <div className="flex h-32 items-center justify-center text-sm text-neutral-500">
+              Đang khởi tạo Engine tìm kiếm...
             </div>
           )}
 
-          {pagefindReady && query && results.length === 0 && (
-            <CommandEmpty>
-              No results found. Try a different keyword.
-            </CommandEmpty>
+          {pagefindReady && results.length === 0 && (
+            <div className="flex h-32 items-center justify-center text-sm text-neutral-500">
+              No data found or please enter keywords to search.
+            </div>
           )}
 
-          {results.length > 0 && (
-            <CommandGroup heading="Results">
-              {results.map((r) => (
-                <CommandItem
-                  key={r.slug}
-                  value={r.title}
-                  keywords={[r.description || ""]}
-                  onSelect={() => {
-                    window.location.href = r.link;
-                  }}
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{r.title}</span>
-                    {r.description ? (
-                      <span className="text-sm opacity-70">
-                        {r.description}
-                      </span>
-                    ) : null}
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
+          <CommandGroup>
+            {results.map((r) => (
+              <CommandItem
+                key={r.slug}
+                onSelect={() => window.location.href = r.link}
+                className="mx-2 my-1 cursor-pointer p-3 rounded-lg border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all"
+              >
+                <div className="flex flex-col gap-1 w-full">
+                  <span className="font-bold text-white">{r.title}</span>
+                  {r.description && (
+                    <span className="text-xs text-neutral-400 line-clamp-1 italic" dangerouslySetInnerHTML={{ __html: r.description }} />
+                  )}
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
         </CommandList>
       </Command>
     </div>
   );
 }
 
-// BẢN MỚI: Đã mở khóa Dialog và bỏ cái <a> redirect sang tab mới
+// Giữ nguyên Dialog
 export function SearchDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hidden sm:flex rounded-lg bg-neutral-950 border border-white/15 hover:bg-neutral-900"
-          aria-label="Search"
-        >
+        <Button id="search-dialog-trigger" variant="ghost" size="icon" className="hidden sm:flex rounded-lg bg-neutral-950 border border-white/15 hover:bg-neutral-900">
           <SearchIcon size={18} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg p-0 border border-white/10 bg-neutral-950">
+      <DialogContent className="sm:max-w-2xl bg-neutral-950 border border-white/10 p-0 shadow-2xl overflow-hidden rounded-xl">
+        <DialogTitle className="hidden">Search</DialogTitle> 
         <SearchCommandBox />
       </DialogContent>
     </Dialog>

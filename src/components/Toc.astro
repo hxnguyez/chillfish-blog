@@ -2,9 +2,7 @@
 import { Button } from "@ui/button";
 import { CardTitle } from "@ui/card";
 import { ChevronDown } from "lucide-react";
-
 import config from "@shConfig";
-
 import I18nKey from "@i18n/i18nKey";
 import i18n from "@i18n/translation";
 
@@ -18,280 +16,152 @@ interface Props {
 
 const { headings } = Astro.props;
 
-// 清理文本：移除錨點符號
 const cleanHeadingText = (text: string): string => {
   return text.replace("#", "").trim();
 };
 
-// 構建樹形結構，根據 config 設定最小與最大深度
-const minDepth = config.behavior.tableOfContents.minDepth;
-const maxDepth = config.behavior.tableOfContents.maxDepth;
+const minDepth = config.behavior.tableOfContents.minDepth || 2;
+const maxDepth = config.behavior.tableOfContents.maxDepth || 4;
 
-const tocTree = headings.reduce(
-  (acc, heading) => {
+// Group headings đa tầng chuẩn xác
+const tocTree = headings
+  .filter(h => h.depth >= minDepth && (maxDepth === -1 || h.depth <= maxDepth))
+  .reduce((acc, heading) => {
+    const cleanText = cleanHeadingText(heading.text);
     if (heading.depth === minDepth) {
-      acc.push({
-        ...heading,
-        text: cleanHeadingText(heading.text),
-        children: [],
-      });
-    } else if (
-      heading.depth > minDepth &&
-      (maxDepth === -1 || heading.depth <= maxDepth) &&
-      acc.length > 0
-    ) {
-      acc[acc.length - 1].children.push({
-        ...heading,
-        text: cleanHeadingText(heading.text),
-      });
+      acc.push({ ...heading, text: cleanText, children: [] });
+    } else if (acc.length > 0) {
+      acc[acc.length - 1].children.push({ ...heading, text: cleanText });
     }
     return acc;
-  },
-  [] as Array<{
-    depth: number;
-    slug: string;
-    text: string;
-    children: Array<{ depth: number; slug: string; text: string }>;
-  }>,
-);
+  }, [] as Array<{ depth: number; slug: string; text: string; children: Array<{ depth: number; slug: string; text: string }> }>);
 ---
 
-<div id="toc" class="sticky top-30 z-40 mt-5" data-pagefind-ignore>
-  {
-    tocTree.length > 0 && (
-      <div class="flex h-full flex-col">
-        <div class="border-b border-slate-700 px-4 py-3">
-          <CardTitle className="text-white text-sm font-semibold tracking-wider bg-transparent">
-            {i18n(I18nKey.post_toc_title)}
-          </CardTitle>
-        </div>
-        <nav class="flex-1 overflow-y-auto" data-blog-toc-nav>
-          <ol class="py-2" data-blog-toc>
-            {tocTree.map((item, index) => (
-              <li class="group">
+<div id="toc" class="mt-5 w-full border border-white/10 rounded-xl bg-neutral-900/40 backdrop-blur-md overflow-hidden shadow-2xl" data-pagefind-ignore>
+  {tocTree.length > 0 && (
+    <div class="flex flex-col max-h-[65vh]">
+      <div class="border-b border-white/10 px-4 py-3 bg-white/5 flex items-center justify-between">
+        <CardTitle className="text-white text-[11px] font-bold tracking-[0.2em] uppercase flex items-center gap-2">
+          <span class="h-1.5 w-1.5 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
+          {i18n(I18nKey.post_toc_title)}
+        </CardTitle>
+        <span class="text-[10px] text-neutral-500 font-mono">[{headings.length}]</span>
+      </div>
+      
+      <nav class="overflow-y-auto custom-scrollbar p-2" data-blog-toc-nav>
+        <ol class="space-y-0.5" data-blog-toc>
+          {tocTree.map((item, index) => (
+            <li class="group/toc">
+              <div class="flex items-center group">
                 <a
                   href={`#${item.slug}`}
-                  class={`toc-link toc-level-${minDepth} relative flex items-center gap-2 px-4 py-2 text-sm text-slate-300 transition-colors duration-400 hover:text-white`}
-                  data-heading-index={index}
+                  class={`toc-link toc-level-${item.depth} flex-1 truncate rounded-md px-3 py-1.5 text-[13px] text-neutral-400 transition-all hover:bg-white/5 hover:text-cyan-400`}
                   data-heading-slug={item.slug}
                 >
-                  <span class="flex-1 truncate">{item.text}</span>
-                  {item.children.length > 0 && (
-                    <Button
-                      className="toc-toggle shrink-0 w-5 h-5 flex items-center justify-center rounded hover:bg-slate-700 transition-colors"
-                      data-toggle-target={`toc-children-${index}`}
-                      type="button"
-                      aria-label={`展開 ${item.text} 的子項`}
-                      aria-expanded="false"
-                      aria-controls={`toc-children-${index}`}
-                      asChild
-                    >
-                      <ChevronDown
-                        size={16}
-                        className="transition-transform duration-400"
-                      />
-                    </Button>
-                  )}
+                  {item.text}
                 </a>
                 {item.children.length > 0 && (
-                  <ul
-                    class="toc-children overflow-hidden transition-all duration-400"
-                    id={`toc-children-${index}`}
-                    style="max-height: 0;"
-                    hidden
+                  <button 
+                    class="toc-toggle p-1.5 text-neutral-600 hover:text-cyan-400 transition-all"
+                    data-toggle-target={`toc-children-${index}`}
                   >
-                    {item.children.map((child) => (
-                      <li>
-                        <a
-                          href={`#${child.slug}`}
-                          class={`toc-link toc-level-${child.depth} block truncate py-1.5 text-xs text-slate-400 transition-colors duration-400 hover:text-slate-100`}
-                          style={`padding-left: ${1.5 + (child.depth - minDepth) * 1}rem;`}
-                          data-heading-slug={child.slug}
-                          tabindex="-1"
-                        >
-                          {child.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                    <ChevronDown size={12} className="transition-transform duration-300" />
+                  </button>
                 )}
-              </li>
-            ))}
-          </ol>
-        </nav>
-      </div>
-    )
-  }
+              </div>
+
+              {item.children.length > 0 && (
+                <ul
+                  class="toc-children mt-0.5 mb-1 space-y-0.5 border-l border-white/10 ml-5 pl-2"
+                  id={`toc-children-${index}`}
+                >
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        href={`#${child.slug}`}
+                        class={`toc-link toc-level-${child.depth} block truncate rounded-md px-3 py-1 text-[11px] text-neutral-500 transition-all hover:text-cyan-400 hover:bg-white/5`}
+                        data-heading-slug={child.slug}
+                      >
+                        {child.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </div>
+  )}
 </div>
 
-<script is:inline define:vars={{ minDepth }}>
-  let currentH2Index = null;
+<style>
+  /* Hiệu ứng Active lân cận */
+  .toc-link.active {
+    color: #22d3ee !important;
+    background: rgba(34, 211, 238, 0.08);
+    font-weight: 600;
+    padding-left: 1rem;
+    border-left: 2px solid #22d3ee;
+    border-radius: 0 4px 4px 0;
+  }
 
-  // 設置標題的滾動邊距，防止被 TOC 卡住
-  document
-    .querySelectorAll("article :is(h2,h3,h4,h5,h6)")
-    .forEach((heading) => {
-      heading.style.scrollMarginTop = "90px";
-    });
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.3); }
 
-  // 切換子項顯示/隱藏
-  document.querySelectorAll(".toc-toggle").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
-      const targetId = button.getAttribute("data-toggle-target");
-      if (!targetId) return;
-      const target = document.getElementById(targetId);
-      if (!target) return;
+  .toc-children {
+    transition: max-height 0.3s ease-out, opacity 0.2s ease;
+  }
+  .toc-children.hidden {
+    display: none;
+  }
+</style>
 
-      const isHidden = target.hasAttribute("hidden");
+<script is:inline>
+  function initToC() {
+    const headings = Array.from(document.querySelectorAll("article :is(h2,h3,h4,h5,h6)"));
+    const tocLinks = document.querySelectorAll(".toc-link");
+    const navContainer = document.querySelector("[data-blog-toc-nav]");
+    
+    if (!headings.length || !navContainer) return;
 
-      if (isHidden) {
-        // 展開：先移除 hidden，觸發 reflow 後再設置 max-height
-        target.removeAttribute("hidden");
-        target.querySelectorAll("a").forEach((link) => {
-          link.removeAttribute("tabindex");
-        });
-        // 強制 reflow 讓 display 變化生效
-        void target.offsetHeight;
-        target.style.maxHeight = "1000px";
-        button.setAttribute("aria-expanded", "true");
-      } else {
-        // 收合：先設置 max-height 觸發動畫，結束後再設置 hidden
-        target.style.maxHeight = "0px";
-        button.setAttribute("aria-expanded", "false");
-        setTimeout(() => {
-          target.setAttribute("hidden", "");
-          target.querySelectorAll("a").forEach((link) => {
-            link.setAttribute("tabindex", "-1");
-          });
-        }, 400);
-      }
+    headings.forEach(h => h.style.scrollMarginTop = "120px");
 
-      // 旋轉箭頭
-      const chevron = button.querySelector("svg");
-      if (chevron) {
-        chevron.style.transform = isHidden ? "rotate(-180deg)" : "rotate(0deg)";
-      }
-    });
-  });
-
-  // 當用戶點擊某個標題時，自動展開其父項
-  document
-    .querySelectorAll("article :is(h2,h3,h4,h5,h6)")
-    .forEach((heading) => {
-      heading.addEventListener("click", () => {
-        const slug = heading.id;
-        const tocLink = document.querySelector(
-          `[data-blog-toc] a[data-heading-slug="${slug}"]`,
-        );
-
-        if (tocLink) {
-          const parent = tocLink.closest("li");
-          if (parent) {
-            const toggleButton =
-              parent.previousElementSibling?.querySelector(".toc-toggle");
-            if (toggleButton) {
-              const targetId = toggleButton.getAttribute("data-toggle-target");
-              if (targetId) {
-                const target = document.getElementById(targetId);
-                if (target && target.hasAttribute("hidden")) {
-                  target.removeAttribute("hidden");
-                  target.querySelectorAll("a").forEach((link) => {
-                    link.removeAttribute("tabindex");
-                  });
-                  void target.offsetHeight;
-                  target.style.maxHeight = "1000px";
-                  toggleButton.setAttribute("aria-expanded", "true");
-                  const chevron = toggleButton.querySelector("svg");
-                  if (chevron) chevron.style.transform = "rotate(-180deg)";
-                }
-              }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            if (link.getAttribute("data-heading-slug") === id) {
+              link.classList.add("active");
+              // Tự động cuộn ToC list
+              link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+              link.classList.remove("active");
             }
-          }
+          });
         }
       });
+    }, { rootMargin: "-10% 0px -70% 0px", threshold: 0 });
+
+    headings.forEach(h => observer.observe(h));
+
+    // Fix click toggle
+    document.querySelectorAll(".toc-toggle").forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const target = document.getElementById(btn.dataset.toggleTarget);
+        if (target) {
+          target.classList.toggle("hidden");
+          btn.querySelector('svg').style.transform = target.classList.contains("hidden") ? "rotate(-90deg)" : "rotate(0deg)";
+        }
+      };
     });
+  }
 
-  // 高亮當前閱讀位置並自動展開/關閉父項
-  const setCurrent = (entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-
-      const id = entry.target.id;
-      if (!id) continue;
-
-      const tocLink = document.querySelector(
-        `[data-blog-toc] a[data-heading-slug="${id}"]`,
-      );
-      if (!tocLink) continue;
-
-      // 高亮
-      document
-        .querySelectorAll("[data-blog-toc] a.active")
-        .forEach((e) => e.classList.remove("active"));
-      tocLink.classList.add("active");
-
-      const isRootHeading = tocLink.classList.contains(`toc-level-${minDepth}`);
-      if (!isRootHeading) return;
-
-      const index = tocLink.getAttribute("data-heading-index");
-      if (!index) return;
-
-      // 收起上一個 H2
-      if (currentH2Index && currentH2Index !== index) {
-        const prevChildren = document.getElementById(
-          `toc-children-${currentH2Index}`,
-        );
-        if (prevChildren && !prevChildren.hasAttribute("hidden")) {
-          prevChildren.style.maxHeight = "0px";
-          const prevToggle = document.querySelector(
-            `[data-toggle-target="toc-children-${currentH2Index}"]`,
-          );
-          if (prevToggle) {
-            prevToggle.setAttribute("aria-expanded", "false");
-          }
-          setTimeout(() => {
-            prevChildren.setAttribute("hidden", "");
-            prevChildren.querySelectorAll("a").forEach((link) => {
-              link.setAttribute("tabindex", "-1");
-            });
-          }, 400);
-          const chevron = prevToggle?.querySelector("svg");
-          if (chevron) chevron.style.transform = "rotate(0deg)";
-        }
-      }
-
-      // 展開目前 H2
-      const currentChildren = document.getElementById(`toc-children-${index}`);
-      if (currentChildren && currentChildren.hasAttribute("hidden")) {
-        currentChildren.removeAttribute("hidden");
-        currentChildren.querySelectorAll("a").forEach((link) => {
-          link.removeAttribute("tabindex");
-        });
-        void currentChildren.offsetHeight;
-        currentChildren.style.maxHeight = "1000px";
-        const toggle = document.querySelector(
-          `[data-toggle-target="toc-children-${index}"]`,
-        );
-        if (toggle) {
-          toggle.setAttribute("aria-expanded", "true");
-        }
-        const chevron = toggle?.querySelector("svg");
-        if (chevron) chevron.style.transform = "rotate(-180deg)";
-      }
-
-      currentH2Index = index;
-    }
-  };
-
-  const observerOption = {
-    root: null,
-    rootMargin: "0px 0px -50%",
-    threshold: 0,
-  };
-
-  const headingObserver = new IntersectionObserver(setCurrent, observerOption);
-  document
-    .querySelectorAll("article :is(h2,h3,h4,h5,h6)")
-    .forEach((heading) => headingObserver.observe(heading));
+  document.addEventListener('astro:page-load', initToC);
+  initToC();
 </script>

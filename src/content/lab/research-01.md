@@ -1,11 +1,18 @@
 ---
-title: "Knowledge around CVE-2026-34159: llama.cpp"
-pubDate: 2026-05-05
-description: "Knowledge when I research a CVE with RCE vulnerablity in RPC Backend of an open source AI."
+title: "Knowledge aroun9: llama.cpp"
+pubDate: 2026-05-06
+description: "Knowledge CVE with RCE vulnerability in RPC Backend of an open source AI."
 heroImage: "/assets/blog/orange.jpg"
 draft: false
 tags: ["CVE", "ndays", "RCE"]
 category: "ndays Research"
+
+# --- PHẦN CẦN THÊM VÀO ĐỂ HIỆN CVE BOX ---
+cveId: "CVE-2026-34159"
+severity: "CRITICAL"
+cvss: "9.8"
+vulnerabilityType: "Remote Code Execution (RCE)"
+# ---------------------------------------
 ---
 
 # **1. Tác dụng của các file:**

@@ -1,3 +1,5 @@
+1. With normal Blog:
+
 ---
 title: "Title here"
 description: "description"
@@ -8,4 +10,31 @@ tags: ["Tag1", "Tag2"]
 category: "category"
 ---
 
-Content...
+
+2. With CVE report:
+
+---
+title: "title"
+pubDate: year-month-day
+description: "description"
+heroImage: "/assets/blog/orange.jpg"
+draft: false
+tags: ["CVE", "tag", "tag"]
+category: "category"
+
+# --- CVE BOX details---
+cveId: "CVE id"
+severity: "severity"
+cvss: "cvss"
+vulnerabilityType: "vulnerabilityType"
+# ---------------------------------------
+---
+
+3. Work in Progress:
+
+---
+title: "title"
+pubDate: year-month-day
+description: "description"
+tags: ["Setup"]
+---

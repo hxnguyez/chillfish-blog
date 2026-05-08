@@ -2,11 +2,23 @@
 import { SITE_TITLE } from "../../consts.ts";
 import config from "@shConfig";
 import { Button } from "@ui/button.tsx";
-import { Mail, Info } from "lucide-react";
+import { Mail } from "lucide-react";
 import { FAVICON_URL } from "../../consts.ts";
 import { SearchDialog } from "../search/SearchDialog";
 
 const links = config.navBar.links;
+
+// Lấy pathname hiện tại để so sánh
+const { pathname } = Astro.url;
+
+/**
+ * Hàm kiểm tra xem link có đang active hay không
+ * isActive sẽ đúng nếu pathname khớp hoàn toàn hoặc là con của href (ví dụ /wip/abc thuộc /wip)
+ */
+const checkActive = (href: string) => {
+  if (href === '/' && pathname !== '/') return false;
+  return pathname === href || pathname.startsWith(href);
+};
 ---
 
 <header class="fixed top-4.5 left-1/2 z-50 w-full max-w-[1278px] -translate-x-1/2 overflow-hidden rounded-2xl backdrop-blur-[6px]">
@@ -22,24 +34,40 @@ const links = config.navBar.links;
 
     <div class="flex items-center gap-2 lg:gap-4">
       <div class="hidden items-center gap-1 pr-4 lg:flex">
-        {links.map((link, index) => (
-          <div class="flex items-center">
-            <a href={link.href} class="px-2 text-sm font-medium text-white uppercase hover:text-white/80 lg:px-4">
-              {link.title}
-            </a>
-            {index < links.length - 1 && <span class="text-sm text-neutral-400">/</span>}
-          </div>
-        ))}
+        {links.map((link, index) => {
+          const isActive = checkActive(link.href);
+          return (
+            <div class="flex items-center">
+              <a 
+                href={link.href} 
+                class={`relative px-2 text-sm font-medium uppercase transition-all lg:px-4 ${isActive ? 'text-cyan-400' : 'text-white hover:text-white/80'}`}
+              >
+                {link.title}
+                {/* Gạch chân dưới chữ khi active */}
+                {isActive && (
+                  <span class="absolute -bottom-2 left-1/2 h-[2px] w-4 -translate-x-1/2 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+                )}
+              </a>
+              {index < links.length - 1 && <span class="text-sm text-neutral-400 select-none">/</span>}
+            </div>
+          )
+        })}
       </div>
 
       <div class="flex items-center gap-1 lg:hidden">
-        {links.map((link, index) => (
-          <div class="flex items-center">
-            <a href={link.href} class="px-2 text-sm font-medium text-white hover:text-white/80">
-              <link.icon size={16} />
-            </a>
-          </div>
-        ))}
+        {links.map((link) => {
+          const isActive = checkActive(link.href);
+          return (
+            <div class="flex items-center">
+              <a 
+                href={link.href} 
+                class={`px-2 text-sm font-medium transition-all ${isActive ? 'text-green-500 scale-110' : 'text-white hover:text-white/80'}`}
+              >
+                <link.icon size={16} />
+              </a>
+            </div>
+          )
+        })}
       </div>
 
       <div class="hidden items-center gap-2 md:flex">

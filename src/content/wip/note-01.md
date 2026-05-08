@@ -5,4 +5,4 @@ description: "Setting up the contribution graph and daily logs"
 tags: ["Daily", "Setup"]
 ---
 
-Nội dung test cho ngày hôm nay.
+somethings...
