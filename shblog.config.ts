@@ -49,8 +49,8 @@ const config = defineConfig({
   navBar: {
     links: [
       { title: "Home", href: "/", icon: Home },
-      { title: "Blog", href: "/blog", icon: Newspaper },
       { title: "Lab", href: "/lab", icon: FlaskConical },
+      { title: "WIP", href: "/wip", icon: Newspaper },
       { title: "About", href: "/about", icon: Info },
     ],
   },

@@ -8,29 +8,27 @@ import BaseMainContent from "@/layouts/BaseMainContent.astro";
 import { HeroSubtitle, HeroTitle } from "@components/content/Home/HeroItems";
 import config from "@shConfig";
 
-// 1. Lấy dữ liệu từ "kho" LAB
-const labPosts = (
-  await getCollection("lab", ({ data }) => {
-    if (import.meta.env.DEV) return true;
-    return data.draft !== true;
-  })
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+// Dùng try-catch để tránh lỗi build khi thư mục chưa có bài viết (Markdown) nào
+let labPosts = [];
+let researchPosts = [];
 
-// Lấy bài nghiên cứu mới nhất để ghim lên Banner bên phải
-const featuredLab = labPosts[0];
+try {
+  labPosts = await getCollection("lab", ({ data }) => import.meta.env.DEV ? true : data.draft !== true);
+  labPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} catch (e) {}
+
+try {
+  researchPosts = await getCollection("research", ({ data }) => import.meta.env.DEV ? true : data.draft !== true);
+  researchPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} catch (e) {}
+
+// Lấy bài mới nhất của Research (ưu tiên) hoặc Lab để ghim
+const featuredLab = researchPosts[0] || labPosts[0];
 const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
-
-/**
- * FIX: Đổi từ .projects sang .lab để khớp với shblog.config.ts
- */
 const { title, subTitle, heroImage } = config.pages.other.lab;
 ---
 
-<BaseLayout
-  title={title}
-  description={subTitle}
-  coverImage={heroImage}
->
+<BaseLayout title={title} description={subTitle} coverImage={heroImage}>
   <Hero backgroundImage={heroImage}>
     <div class="lg:col-span-2" slot="left">
       <HeroTitle>
@@ -41,38 +39,59 @@ const { title, subTitle, heroImage } = config.pages.other.lab;
       </HeroSubtitle>
     </div>
 
-    {
-      featuredLab && (
-        <div class="flex flex-col items-end justify-end gap-5" slot="right">
-          <a
-            href={`/lab/${featuredLab.id}/`}
-            class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
-            style={{
-              /* FIX: Bỏ .src vì heroImage hiện tại là string đường dẫn */
-              backgroundImage: featuredLab.data.heroImage
-                ? `url(${featuredLab.data.heroImage})`
-                : `url(${config.style.defaultPostImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundBlendMode: "darken",
-            }}
-          >
-            <p class="mb-2.5 text-xl tracking-[4px] text-white/60">
-              LATEST RESEARCH
-            </p>
-            <h2 class="text-2xl font-bold text-white transition-colors group-hover:text-white/90 line-clamp-2">
-              {featuredLab.data.title}
-            </h2>
-          </a>
-        </div>
-      )
-    }
+    {featuredLab && (
+      <div class="flex flex-col items-end justify-end gap-5" slot="right">
+        <a
+          href={`/${featuredLab.collection}/${featuredLab.id}/`}
+          class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
+          style={{
+            backgroundImage: featuredLab.data.heroImage
+              ? `url(${featuredLab.data.heroImage})`
+              : `url(${config.style.heroImage.src})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundBlendMode: "darken",
+          }}
+        >
+          <p class="mb-2.5 text-xl tracking-[4px] text-white/60 uppercase">
+            {featuredLab.collection === 'research' ? 'LATEST RESEARCH' : 'LATEST TOOL'}
+          </p>
+          <h2 class="text-2xl font-bold text-white transition-colors group-hover:text-white/90 line-clamp-2">
+            {featuredLab.data.title}
+          </h2>
+        </a>
+      </div>
+    )}
   </Hero>
 
   <BaseMainContent>
     <div class="flex-1" data-pagefind-body transition:name="main-content">
-      {/* Truyền collection="lab" để BlogList biết đường mà lọc dữ liệu */}
-      <BlogList posts={labPosts} collection="lab" currentPage={currentPage} />
+      
+      <div class="mb-8 flex space-x-8 border-b border-white/10 pb-3">
+        <button id="btn-research" class="text-2xl font-bold text-white border-b-2 border-white pb-1 transition-all cursor-pointer">Research</button>
+        <button id="btn-lab" class="text-2xl font-bold text-white/50 border-b-2 border-transparent pb-1 transition-all hover:text-white/80 cursor-pointer">Lab (Tools)</button>
+      </div>
+
+      <div id="content-research" class="block animate-fade-in">
+        {researchPosts.length > 0 ? (
+          <BlogList posts={researchPosts} collection="research" currentPage={currentPage} />
+        ) : (
+          <div class="rounded-xl border border-dashed border-white/20 bg-black/20 p-12 text-center text-white/40">
+            Where is the post? <br/><span class="text-sm">Hacking in progress...</span>
+          </div>
+        )}
+      </div>
+
+      <div id="content-lab" class="hidden animate-fade-in">
+        {labPosts.length > 0 ? (
+          <BlogList posts={labPosts} collection="lab" currentPage={currentPage} />
+        ) : (
+          <div class="rounded-xl border border-dashed border-white/20 bg-black/20 p-12 text-center text-white/40">
+            Where is the post? <br/><span class="text-sm">Setting up the lab...</span>
+          </div>
+        )}
+      </div>
+
     </div>
 
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
@@ -80,3 +99,49 @@ const { title, subTitle, heroImage } = config.pages.other.lab;
     </aside>
   </BaseMainContent>
 </BaseLayout>
+
+<script>
+  // Script xử lý chuyển Tab có hỗ trợ ViewTransitions của Astro
+  function setupTabs() {
+    const btnResearch = document.getElementById('btn-research');
+    const btnLab = document.getElementById('btn-lab');
+    const contentResearch = document.getElementById('content-research');
+    const contentLab = document.getElementById('content-lab');
+
+    if (!btnResearch || !btnLab) return;
+
+    btnResearch.addEventListener('click', () => {
+      contentResearch.classList.remove('hidden');
+      contentResearch.classList.add('block');
+      contentLab.classList.add('hidden');
+      contentLab.classList.remove('block');
+      
+      btnResearch.classList.add('text-white', 'border-white');
+      btnResearch.classList.remove('text-white/50', 'border-transparent');
+      
+      btnLab.classList.remove('text-white', 'border-white');
+      btnLab.classList.add('text-white/50', 'border-transparent');
+    });
+
+    btnLab.addEventListener('click', () => {
+      contentLab.classList.remove('hidden');
+      contentLab.classList.add('block');
+      contentResearch.classList.add('hidden');
+      contentResearch.classList.remove('block');
+      
+      btnLab.classList.add('text-white', 'border-white');
+      btnLab.classList.remove('text-white/50', 'border-transparent');
+      
+      btnResearch.classList.remove('text-white', 'border-white');
+      btnResearch.classList.add('text-white/50', 'border-transparent');
+    });
+  }
+
+  // Lắng nghe sự kiện để script chạy đúng mỗi khi chuyển trang
+  document.addEventListener('astro:page-load', setupTabs);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setupTabs();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupTabs);
+  }
+</script>
