@@ -10,30 +10,63 @@ import config from "@shConfig";
   heroImage={config.pages.other.about.heroImage}
   headings={[]}
 >
-  <div class="mb-16">
-    <h2 class="mb-4 text-2xl font-bold">whoami</h2>
-    <p class="content-text">
-      Hi there! I'm Hung Nguyen (chillfish) - a student at 
-      FPT University majoring in Information Assurance。 
-      Currently, I am focusing on 
-      <span class="italic text-blue-400">Binary Exploitation</span> and <span class="italic text-red-400">Reverse Engineering</span>。
-    </p>
-    <p class="content-text">
-         The reason I chose the nickname <span class="font-bold italic">chillfish</span> is simple: I like the way of chill swimming through the vast ocean of knowledge - even when that ocean is filled with complex machine code and heap structures。I find joy in the process of unraveling the mysteries hidden within binaries, and I hope to share that joy with others through this blog。
-    </p>
-    <p class="content-text">
-         My current toolkit includes <span class="italic text-yellow-500">Python</span> for scripting, 
-      <span class="italic text-green-500">GDB (with GEF)</span> for debugging vulnerabilities, and a robust environment running on <span class="italic text-blue-500">WSL2/Linux</span>。If you are a fellow CTFer or interested in the Pwnable world, feel free to reach out - let's pwn some binaries together! 
-    </p>
-  </div>
+  <section class="max-w-3xl mx-auto space-y-12 antialiased">
+    
+    {/* Section: Whoami */}
+    <div class="group">
+      <h2 class="text-xl font-mono text-amber-500 mb-6 flex items-center gap-2">
+        <span class="opacity-50">#</span> about.me
+      </h2>
+      <div class="space-y-4 text-neutral-400 text-lg leading-relaxed">
+        <p class="text-justify [text-justify:inter-word]">
+          Hi there! I'm <strong class="text-neutral-100 font-bold">Hung Nguyen</strong> (chillfish)。
+          I am currently a student at FPT University, specializing in <span class="text-neutral-200 font-medium border-b border-white/5">Information Assurance</span>。
+        </p>
+        
+        <p class="text-justify [text-justify:inter-word]">
+          My technical focus lies deep within the binary level: 
+          <span class="text-neutral-200 font-medium border-b border-white/5">Binary Exploitation</span> and 
+          <span class="text-neutral-200 font-medium border-b border-white/5">Reverse Engineering</span>。
+        </p>
 
-  <div class="mb-16">
-    <h2 class="mb-4 text-2xl font-bold">About this site</h2>
-    <p class="content-text">
-      This blog is built using the <a href="https://astro.build/">Astro</a> framework。It serves as my personal digital archive for CTF Write-ups, security reports (found in the Lab section), and general tech thoughts。
-    </p>
-    <p class="content-text">
-      My goal for this site is to maintain a technical diary where every post dives deep into the core essence of the problem rather than just scratching the surface。I hope the insights shared here prove useful to anyone else navigating the path to becoming a Security Researcher。
-    </p>
-  </div>
+        <p class="text-justify [text-justify:inter-word]">
+          The nickname <span class="italic font-mono text-amber-500/80">chillfish</span> reflects my philosophy 
+          towards learning — navigating the vast ocean of knowledge with a calm mind, even when 
+          confronted by complex machine code and intricate structures。
+        </p>
+      </div>
+    </div>
+
+    {/* Section: Stack */}
+    <div class="group">
+      <h2 class="text-xl font-mono text-amber-500 mb-6 flex items-center gap-2">
+        <span class="opacity-50">#</span> environment
+      </h2>
+      <div class="text-neutral-400 text-lg leading-relaxed text-justify [text-justify:inter-word]">
+        <p>
+          My daily workflow is built on <span class="text-neutral-200 font-medium border-b border-white/5">WSL2/Linux</span>, 
+          utilizing <span class="text-neutral-200 font-medium border-b border-white/5">GDB (with pwndbg)</span> for vulnerability debugging 
+          and <span class="text-neutral-200 font-medium border-b border-white/5">Python</span> for fast exploit development。
+        </p>
+      </div>
+    </div>
+
+    {/* Section: Purpose */}
+    <div class="group">
+      <h2 class="text-xl font-mono text-amber-500 mb-6 flex items-center gap-2">
+        <span class="opacity-50">#</span> site.purpose
+      </h2>
+      <div class="space-y-4 text-neutral-400 text-lg leading-relaxed text-justify [text-justify:inter-word]">
+        <p>
+          This blog, powered by <a href="https://astro.build/" class="text-amber-500/80 hover:text-amber-500 transition-colors underline decoration-amber-500/20 underline-offset-4">Astro</a>, 
+          functions as a technical diary。
+        </p>
+        <p>
+          My goal when build this blog site is to share my knowledge and experiences in the field of cybersecurity, and to create a personal space where I can document my learning journey, projects, and insights. 
+          I hope that by sharing my work, I can contribute to the community and connect with like-minded individuals who are passionate about cybersecurity and technology。
+        </p>
+      </div>
+    </div>
+
+  </section>
 </Layout>
