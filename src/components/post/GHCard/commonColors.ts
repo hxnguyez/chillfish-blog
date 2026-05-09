@@ -18,7 +18,7 @@ export const commonLangColors: Record<string, string> = {
   SCSS: "#c6538c",
   Astro: "#ff5a03",
   Vue: "#41b883",
-  React: "#61dafb", // 通常 GitHub 會辨識為 JS/TS，但可備用
+  React: "#61dafb", 
   C: "#555555",
   Shell: "#89e051",
   Markdown: "#083fa1",

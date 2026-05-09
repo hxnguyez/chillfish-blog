@@ -1,6 +1,6 @@
 ---
-name: Feature request - 功能請求
-about: Suggest an idea for this project - 建議一個不錯的想法
+name: Feature request
+about: Suggest an idea for this project
 title: "[FEAT] Your suggestion title"
 labels: enhancement
 assignees: '510208'

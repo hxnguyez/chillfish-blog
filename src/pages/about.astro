@@ -10,9 +10,9 @@ import config from "@shConfig";
   heroImage={config.pages.other.about.heroImage}
   headings={[]}
 >
-  <section class="max-w-3xl mx-auto space-y-12 antialiased">
+  <section class="max-w-3xl mx-auto space-y-16 antialiased pb-20">
     
-    {/* Section: Whoami */}
+    {/* Section: about.me */}
     <div class="group">
       <h2 class="text-xl font-mono text-amber-500 mb-6 flex items-center gap-2">
         <span class="opacity-50">#</span> about.me
@@ -37,7 +37,7 @@ import config from "@shConfig";
       </div>
     </div>
 
-    {/* Section: Stack */}
+    {/* Section: Environment */}
     <div class="group">
       <h2 class="text-xl font-mono text-amber-500 mb-6 flex items-center gap-2">
         <span class="opacity-50">#</span> environment
@@ -62,8 +62,24 @@ import config from "@shConfig";
           functions as a technical diary。
         </p>
         <p>
-          My goal when build this blog site is to share my knowledge and experiences in the field of cybersecurity, and to create a personal space where I can document my learning journey, projects, and insights. 
+          My goal when building this blog site is to share my knowledge and experiences in the field of cybersecurity, and to create a personal space where I can document my learning journey, projects, and insights. 
           I hope that by sharing my work, I can contribute to the community and connect with like-minded individuals who are passionate about cybersecurity and technology。
+        </p>
+      </div>
+    </div>
+
+    {/* Section: Credits & System Info */}
+    <div class="pt-8 border-t border-white/5 group">
+      <h2 class="text-sm font-mono text-neutral-500 mb-4 tracking-widest uppercase">
+        <span class="opacity-50">#</span> system.info
+      </h2>
+      <div class="text-neutral-500 text-sm leading-relaxed space-y-2">
+        <p>
+          Architecture based on <a href="https://github.com/saicaca/shblog-next" target="_blank" class="text-neutral-400 hover:text-amber-500 underline decoration-white/10 underline-offset-4 transition-colors">SHBlog Next</a> by Saicaca.
+        </p>
+        <p>
+          Content is licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" class="text-neutral-400 hover:text-amber-500 underline decoration-white/10 underline-offset-4 transition-colors">CC BY-NC 4.0</a>. 
+          Proper attribution is appreciated when sharing.
         </p>
       </div>
     </div>

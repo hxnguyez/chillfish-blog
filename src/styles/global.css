@@ -1,9 +1,7 @@
-/* Import Tailwind CSS v4 */
 @import "tailwindcss";
 
 @tailwind utilities;
 
-/* Import fonts from FontSource */
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/noto-sans-tc";
 
@@ -23,21 +21,16 @@
   font-display: swap;
 }
 
-/* Import TailwindCSS Animation */
 @import "tw-animate-css";
 
-/* Custom variants*/
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Tailwind CSS v4 Theme Configuration */
 @theme {
-  /* Font families */
   --font-sans: "Inter", "Noto Sans TC", sans-serif;
   --font-mono: "Maple Font", "Fira Code", monospace;
   --font-display: "Inter", "Noto Sans TC", sans-serif;
   --font-funny: "ChenYuluoyan 2.0", "Noto Sans TC", sans-serif;
 
-  /* Design system breakpoints */
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
@@ -45,7 +38,6 @@
   --breakpoint-2xl: 1536px;
 }
 
-/* Global base styles */
 @layer base {
   body {
     @apply bg-neutral-950 font-sans text-white;
@@ -140,19 +132,16 @@
   }
 }
 
-/* Improve Scroll */
 html,
 body {
   scroll-behavior: smooth;
 }
 
-/* ::selected 效果 */
 ::selection {
   @apply bg-white/20 text-white;
 }
-/* Style lại thẻ <mark> (vùng highlight) trong kết quả tìm kiếm */
 mark {
-  background-color: rgba(139, 92, 246, 0.3) !important; /* Đen highlight tím */
+  background-color: rgba(139, 92, 246, 0.3) !important; 
   color: #fff !important;
   border-radius: 2px;
   padding: 0 2px;

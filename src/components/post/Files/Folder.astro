@@ -13,7 +13,6 @@ interface Props {
   highlighted?: boolean;
 }
 const { name, defaultOpen = false, highlighted = false } = Astro.props;
-// 產生唯一 ID 以供腳本控管
 const folderId = `folder-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
@@ -74,8 +73,6 @@ const folderId = `folder-${Math.random().toString(36).substr(2, 9)}`;
     outline: none;
   }
 
-  /* 核心邏輯：如果 folder-root 內部的 folder-content 包含任何被高亮的元素 */
-  /* 則顯示該層級 trigger 內的綠點 */
   .folder-root:has(.folder-content .is-highlighted)
     > .folder-trigger
     .parent-highlight-indicator {

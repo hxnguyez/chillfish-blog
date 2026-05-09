@@ -66,7 +66,6 @@ const defaultConfig: ShBlogConfig = {
 
   friendLinks: [],
 
-  // ĐÃ LOẠI BỎ COMMENT, GTM, VÀ CÁC THỨ KHÔNG CẦN THIẾT
   behavior: {
     enable404EasterEgg: true,
     tableOfContents: { enable: true, minDepth: 2, maxDepth: 4 },

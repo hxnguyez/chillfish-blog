@@ -32,7 +32,6 @@ export default function BlogCard({
   collection = "blog",
   isLoading = false,
 }: BlogCardProps) {
-  // TÍNH TOÁN NGAY LÚC RENDER ĐỂ SSR CÓ DỮ LIỆU LUÔN
   const dateObj = new Date(pubDate);
   const initialFormattedDate = dateObj.toLocaleDateString(config.lang || "en-US", {
     year: "numeric",
@@ -43,7 +42,6 @@ export default function BlogCard({
   const [formattedDate, setFormattedDate] = useState<string>(initialFormattedDate);
 
   useEffect(() => {
-    // Đảm bảo format lại ở client nếu có sự khác biệt về locale
     const date = new Date(pubDate);
     setFormattedDate(
       date.toLocaleDateString(config.lang || "en-US", {
@@ -73,7 +71,7 @@ export default function BlogCard({
           isLoading ? "bg-neutral-800" : "bg-neutral-900"
         } group relative flex h-full flex-col`}
       >
-        {/* 背景圖層 */}
+        {/* Decorative background layer */}
         {!isLoading && heroImage && (
           <div className="absolute inset-0 z-0 overflow-hidden rounded-[14px]">
             <img
@@ -122,7 +120,7 @@ export default function BlogCard({
             )}
           </div>
 
-          {/* Metadata - ĐÃ FIX ĐỂ LUÔN HIỆN DATE */}
+          {/* Metadata */}
           <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500">
             {!isLoading ? (
               <>

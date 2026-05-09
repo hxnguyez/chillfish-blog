@@ -2,10 +2,8 @@
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
 
-// 1. Sinh ra đường dẫn tĩnh cho toàn bộ bài viết trong collection 'research'
 export async function getStaticPaths() {
   const posts = await getCollection("research", ({ data }) => {
-    // Luôn hiện bài trong môi trường DEV để Hưng preview nhanh
     if (import.meta.env.DEV) return true;
     return data.draft !== true;
   });
@@ -16,19 +14,17 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. Định nghĩa Type Props từ Collection 'research'
 type Props = CollectionEntry<"research">;
 
 const post = Astro.props;
 const { Content, headings } = await render(post);
 
-// 3. Import các xử lý Markdown chuẩn của template
 const ImagePacked = (await import("@components/markdown/ImagePacked.astro")).default;
 const BlockQuotePacked = (await import("@components/markdown/BlockQuotePacked.astro")).default;
 ---
 
 <BlogPost {...post.data} headings={headings} description={post.data.description ?? ""}>
-  {/* Hiển thị nội dung bài Research với các thành phần tùy chỉnh */}
+  {/* Research heading */}
   <Content
     components={{
       img: ImagePacked,

@@ -4,7 +4,6 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import config from "@shConfig";
 
 export async function GET(context) {
-  // RSS feed 只顯示非 draft 文章
   const posts = await getCollection("blog", ({ data }) => data.draft !== true);
   return rss({
     title: SITE_TITLE,
@@ -16,7 +15,7 @@ export async function GET(context) {
       enclosure: post.data.heroImage
         ? {
             url: new URL(post.data.heroImage?.src, context.site).href,
-            type: "image/jpeg", // 或根據你的圖檔格式調整
+            type: "image/jpeg",
             length: 0,
           }
         : undefined,

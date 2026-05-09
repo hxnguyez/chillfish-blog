@@ -134,7 +134,7 @@ const { title, subTitle, heroImage } = pageConfig;
               data-month={dateObj.getMonth()}
               data-year={dateObj.getFullYear()}
             >
-               {/* Sửa màu sáng tại đây: text-neutral-300 */}
+               {/* text-neutral-300 */}
                <span class="text-[10px] font-mono text-neutral-300 min-w-[40px] select-none">[{displayDate}]</span>
                <div class={`h-2.5 w-2.5 rounded-full shrink-0 ${getLocalDateString(dateObj) === getLocalDateString(now) ? 'bg-green-500 ring-4 ring-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-[#30363d]'}`}></div>
                <div class="flex-1 overflow-hidden">

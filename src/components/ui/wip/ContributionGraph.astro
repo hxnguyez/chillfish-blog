@@ -6,7 +6,6 @@ interface Props {
 
 const { logs, year } = Astro.props;
 
-// 1. Tạo mảng chứa tất cả các ngày trong năm được chọn
 const startDate = new Date(year, 0, 1);
 const endDate = new Date(year, 11, 31);
 const daysInYear = [];
@@ -17,12 +16,10 @@ while (currentDate <= endDate) {
   currentDate.setDate(currentDate.getDate() + 1);
 }
 
-// 2. Lấy danh sách các ngày có bài đăng (định dạng YYYY-MM-DD để so sánh)
 const activeDays = new Set(
   logs.map(log => new Date(log.data.pubDate).toISOString().split('T')[0])
 );
 
-// 3. Nhóm các ngày theo tháng để hiển thị nhãn (Jan, Feb...)
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 ---
 

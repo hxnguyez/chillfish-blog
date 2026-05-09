@@ -115,7 +115,6 @@ export function SearchCommandBox() {
 
         <div className="flex items-center gap-6 px-4 py-2 border-b border-white/5 bg-neutral-900/40 text-[11px] uppercase tracking-widest font-semibold z-50">
           
-          {/* CATEGORY DROPDOWN - Đổi sang Amber */}
           <div className="relative">
             <button 
               onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
@@ -148,7 +147,6 @@ export function SearchCommandBox() {
             )}
           </div>
 
-          {/* TAG DROPDOWN - Đổi sang Orange */}
           <div className="relative border-l border-white/10 pl-6">
             <button 
               onClick={() => setActiveDropdown(activeDropdown === 'tag' ? null : 'tag')}

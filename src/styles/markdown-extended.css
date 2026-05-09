@@ -1,5 +1,3 @@
-/* 此文件擷取自Fuwari專案 */
-
 :root {
   --primary: oklch(0.7 0.14 var(--hue)) oklch(0.75 0.14 var(--hue));
   --page-bg: oklch(0.95 0.01 var(--hue)) oklch(0.16 0.014 var(--hue));

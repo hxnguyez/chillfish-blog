@@ -1,4 +1,3 @@
-// @ts-check
 
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
@@ -13,16 +12,14 @@ import remarkSpoiler from "./src/plugins/remark-spoiler.js";
 import { remarkCitation } from "./src/plugins/remark-citation.mjs";
 import { remarkZoomableImage } from "./src/plugins/remark-zoomable-image.mjs";
 
-// @ts-ignore
 import rehypeCodeBlock from "./src/plugins/rehype-code-block.mjs";
-// @ts-ignore
+
 import shikiCodeMetadata from "./src/plugins/shiki-code-metadata.mjs";
 import rehypeCodeTitles from "rehype-code-titles";
-// @ts-ignore
+
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
-// import rehypePangu from "./src/plugins/rehype-pangu.mjs";
 
 import { asideAutoImport, astroAsides } from "./src/utils/astro-aside";
 import AutoImport from "astro-auto-import";
@@ -40,10 +37,8 @@ import { fileURLToPath } from "url";
 import { config as loadEnv } from "dotenv";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Load environment variables from .env file
 loadEnv();
 
-// https://astro.build/config
 export default defineConfig({
   site: "https://chillfish.me",
   integrations: [
@@ -80,18 +75,15 @@ export default defineConfig({
 
   experimental: {
     svgo: true,
-    // rustCompiler: true,    // 啟用 Rust 編譯器以提升構建性能（需要安裝 @astrojs/compiler-rs 包）
   },
 
   markdown: {
     shikiConfig: {
-      // 添加 Shiki transformer 來處理代碼區塊的 metadata
       transformers: [shikiCodeMetadata()],
     },
     remarkPlugins: [
       remarkMath,
       remarkReadingTime,
-      // remarkGithubAdmonitionsToDirectives,
       remarkDirective,
       remarkSectionize,
       remarkSpoiler,
@@ -125,7 +117,6 @@ export default defineConfig({
       ],
       rehypeCodeTitles,
       rehypeCodeBlock,
-      // rehypePangu,
       rehypeKatex,
     ],
   },

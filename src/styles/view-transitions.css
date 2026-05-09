@@ -1,7 +1,3 @@
-/* View Transitions */
-/* 貢獻者: Zhenyuan (https://github.com/awdrgyj8) */
-
-/* Hero：放大縮小 + 向上滑動（進場從略為放大開始，縮回正常尺寸同時上滑） */
 @keyframes vt-hero-in {
   from {
     opacity: 0;
@@ -20,7 +16,6 @@
   }
 }
 
-/* 內容區塊：fade + 向上滑動 */
 @keyframes vt-fade-in-up {
   from {
     opacity: 0;
@@ -39,7 +34,6 @@
   }
 }
 
-/* Root: 快速淡出 (Header/Footer 有 transition:persist，root 基本上是空的) */
 ::view-transition-old(root) {
   animation: 200ms ease vt-fade-out-up both;
 }
@@ -47,7 +41,6 @@
   animation: 200ms ease vt-fade-in-up both;
 }
 
-/* Header&Footer: 保持靜止，不執行過渡動畫 */
 ::view-transition-old(header),
 ::view-transition-old(footer) {
   animation: none;
@@ -57,7 +50,6 @@
   animation: none;
 }
 
-/* Hero 區塊：放大縮小 + 向上滑動，使用 easeOut 曲線讓結尾更自然 */
 ::view-transition-old(hero) {
   animation: 300ms cubic-bezier(0.4, 0, 1, 1) vt-hero-out both;
 }
@@ -65,7 +57,6 @@
   animation: 700ms cubic-bezier(0.16, 1, 0.3, 1) vt-hero-in both;
 }
 
-/* 主要內容：80ms 後進場 */
 ::view-transition-old(main-content) {
   animation: 250ms cubic-bezier(0.4, 0, 1, 1) vt-fade-out-up both;
 }
@@ -74,7 +65,6 @@
   animation-delay: 80ms;
 }
 
-/* 側欄：180ms 後進場 */
 ::view-transition-old(sidebar) {
   animation: 250ms cubic-bezier(0.4, 0, 1, 1) vt-fade-out-up both;
 }
@@ -83,7 +73,6 @@
   animation-delay: 180ms;
 }
 
-/* article 區段使用 main-content 轉場 */
 article {
   view-transition-name: main-content;
 }

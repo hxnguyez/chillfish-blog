@@ -1,12 +1,9 @@
-/* Import Tailwind CSS v4 */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./global.css";
 
-/* Import fonts from FontSource */
 @import "@fontsource-variable/noto-serif-tc";
 
-/* 設定預設 serif 字體 */
 @theme {
   --font-serif: "Noto Serif TC", serif;
 }
@@ -15,19 +12,15 @@
 
 @layer markdown-content {
   #post-content {
-    /* 預設 */
+
     & section > * {
       @apply mb-4;
     }
 
-    /* 段落樣式 */
     & p:not(.content p, .sh-builtin-components p, .katex, .katex *) {
       @apply text-lg leading-relaxed text-neutral-400 transition-colors duration-300;
     }
 
-    /* ========================================= */
-    /* 1. SỬA LỖI HEADING TO: Ép cứng font-size */
-    /* ========================================= */
     & h1, & h2, & h3, & h4, & h5, & h6 {
       @apply font-display mt-10! mb-4! font-bold text-neutral-200;
       line-height: 1.3 !important;
@@ -39,16 +32,12 @@
     & h4 { font-size: 1.15rem !important; }
     & h5, & h6 { font-size: 1rem !important; }
 
-    /* ========================================= */
-    /* 2. LIST (Màu marker Amber)                */
-    /* ========================================= */
     & ul, & ol { @apply pl-6 mb-6 text-lg leading-relaxed text-neutral-400; }
     & ul { @apply list-disc list-outside marker:text-amber-500/70; }
     & ol { @apply list-decimal list-outside marker:text-amber-500/70 font-mono; }
     & li { @apply pl-2 mb-2 break-words; }
     & li > ul, & li > ol { @apply mt-2 mb-0 border-l border-white/10 pl-6 ml-1; }
 
-    /* 引言樣式 (Blockquote - Amber) */
     & blockquote {
       @apply ml-0 border-l-4 border-amber-500/50 bg-amber-500/5 py-2 pl-4 font-serif text-neutral-300 italic transition-all duration-300 hover:border-amber-400;
       & p { @apply transition-colors duration-300 group-hover:text-neutral-100 mb-0; }
@@ -62,9 +51,6 @@
       }
     }
 
-    /* ========================================= */
-    /* 3. CODE BLOCK & TABLE (FIX SCROLLBAR)     */
-    /* ========================================= */
     .ec-line { @apply font-mono!; }
 
     /* Reset thẻ code để tránh bị wrap dòng */
@@ -74,7 +60,6 @@
       word-wrap: normal !important;
     }
 
-    /* Cấu hình thẻ pre và các class của plugin render code */
     & pre, 
     & .expressive-code pre,
     & [class*="rehype-pretty-code"] pre {
@@ -84,7 +69,6 @@
       display: block !important;
     }
 
-    /* Ép hiện thanh cuộn Cam Vàng cho mọi loại Code Block */
     & pre::-webkit-scrollbar,
     & [class*="expressive-code"] pre::-webkit-scrollbar,
     & [class*="rehype-pretty-code"] pre::-webkit-scrollbar {
@@ -123,9 +107,6 @@
       &:hover { @apply bg-amber-500/10 transition-colors duration-300; }
     }
 
-    /* ========================================= */
-    /* 4. LINKS & INLINE ELEMENTS                */
-    /* ========================================= */
     & hr { @apply mx-auto my-10 max-w-3xl justify-center border-t border-dashed border-white/20; }
 
     & a:not(.sh-builtin-components, .anchor) {
@@ -144,9 +125,6 @@
     & img { @apply my-6 rounded-lg border border-white/10 shadow-lg block mx-auto; }
     .anchor-icon, a.anchor { display: none !important; }
 
-    /* ========================================= */
-    /* 5. MAIN SCROLLBAR                         */
-    /* ========================================= */
     & *::-webkit-scrollbar { height: 8px !important; width: 8px !important; }
     & *::-webkit-scrollbar-thumb {
       background-color: rgba(245, 158, 11, 0.4) !important; border-radius: 10px !important;

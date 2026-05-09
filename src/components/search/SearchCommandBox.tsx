@@ -88,13 +88,7 @@ export function SearchCommandBox() {
 
   return (
     <div className="flex flex-col bg-neutral-950 min-h-[400px]">
-      
-      {/* ========================================================
-          VƯỢT RÀO SHADCN: ĐẶT BỘ LỌC RA HẲN BÊN NGOÀI THẺ COMMAND
-          ======================================================== */}
       <div className="px-4 py-4 border-b border-white/10 bg-neutral-900/60 z-10">
-        
-        {/* Lọc theo Category */}
         <div className="mb-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
           <FolderIcon size={14} className="text-cyan-400 shrink-0" />
           <div className="flex gap-2">
@@ -104,8 +98,6 @@ export function SearchCommandBox() {
             >
               All Categories
             </button>
-            
-            {/* Nếu có dữ liệu thì hiện, nếu không thì báo lỗi chưa Build */}
             {availableFilters.category && Object.keys(availableFilters.category).length > 0 ? (
               Object.keys(availableFilters.category).map(cat => (
                 <button 
@@ -117,12 +109,11 @@ export function SearchCommandBox() {
                 </button>
               ))
             ) : (
-              <span className="text-[10px] text-red-400 italic px-2 py-1">Chưa có Data (Hãy chạy npm run build)</span>
+              <span className="text-[10px] text-red-400 italic px-2 py-1">Data not found (run npm run build)</span>
             )}
           </div>
         </div>
 
-        {/* Lọc theo Tag */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
           <TagIcon size={14} className="text-purple-400 shrink-0" />
           <div className="flex gap-2">
@@ -133,7 +124,6 @@ export function SearchCommandBox() {
               Any Tag
             </button>
 
-            {/* Nếu có dữ liệu thì hiện, nếu không thì báo lỗi chưa Build */}
             {availableFilters.tags && Object.keys(availableFilters.tags).length > 0 ? (
               Object.keys(availableFilters.tags).slice(0, 10).map(tag => (
                 <button 
@@ -145,14 +135,12 @@ export function SearchCommandBox() {
                 </button>
               ))
             ) : (
-              <span className="text-[10px] text-red-400 italic px-2 py-1">Chưa có Data (Hãy chạy npm run build)</span>
+              <span className="text-[10px] text-red-400 italic px-2 py-1">Data not found (run npm run build)</span>
             )}
           </div>
         </div>
       </div>
-      {/* ======================================================== */}
 
-      {/* KHU VỰC COMMAND CỦA SHADCN */}
       <Command shouldFilter={false} className="border-none bg-transparent flex-1">
         <CommandInput
           placeholder="Type to search (e.g. Llama, Buffer Overflow...)"

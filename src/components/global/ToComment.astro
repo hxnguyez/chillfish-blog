@@ -4,7 +4,6 @@ import { ToCommentButton } from "./ToComment";
 
 <ToCommentButton className={Astro.props.class} client:load />
 
-<!-- Client-side JavaScript: Handles interaction -->
 <script>
   const handleToComment = (id: string) => {
     const btn = document.getElementById(id);
@@ -13,7 +12,6 @@ import { ToCommentButton } from "./ToComment";
       const commentsSection = document.getElementById("comment-sep");
       if (commentsSection) {
         const offsetTop = commentsSection.offsetTop - 120;
-        // Tối ưu: Đổi 'smooth' thành 'auto' để tránh lag trên WSL
         window.scrollTo({ top: offsetTop, behavior: "auto" });
       }
     });

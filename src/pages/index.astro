@@ -12,7 +12,6 @@ import config from "@shConfig";
 import i18n from "@i18n/translation";
 import I18nKey from "@i18n/i18nKey";
 
-// Lấy 6 bài mới nhất, loại bỏ bóng ma
 const posts = (
   await getCollection("blog", ({ data }) => {
     return data.draft !== true && !!data.title;

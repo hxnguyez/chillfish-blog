@@ -12,7 +12,6 @@ const { posts: propsPosts, collection = "blog" } = Astro.props;
 const postsPerPage = config.style.postsPerPage || 6;
 const typedCollection = collection as "blog" | "lab" | "research";
 
-// Lọc bài viết: Bỏ draft, bỏ bài không tiêu đề
 const allPosts = propsPosts || (
   await getCollection(typedCollection, ({ data }: any) => {
     return data.draft !== true && !!data.title;
@@ -30,7 +29,6 @@ const serializedPosts = allPosts.map((post: any) => {
     }
   }
 
-  // FIX LỆCH NGÀY: Lấy ngày theo Local Time để không bị nhảy về UTC (lùi 1 ngày)
   const d = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
   const formattedDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
@@ -39,7 +37,7 @@ const serializedPosts = allPosts.map((post: any) => {
     data: {
       title: post.data.title,
       description: post.data.description,
-      pubDate: formattedDate, // Trả về chuỗi YYYY-MM-DD cố định
+      pubDate: formattedDate, 
       heroImage: finalImage,
       category: post.data.category ?? null,
       tags: post.data.tags ?? null,

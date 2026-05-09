@@ -33,7 +33,6 @@ interface Props {
 
 const { title, description, pubDate, updatedDate, heroImage, collection = "blog", headings, tags } = Astro.props;
 
-// Dữ liệu bổ sung cho Pagefind
 const data = (Astro.props as any).data || (Astro.props as any).frontmatter || Astro.props;
 const { cveId, severity, cvss, category } = data;
 ---
@@ -49,7 +48,7 @@ const { cveId, severity, cvss, category } = data;
   <BaseMainContent>
     <article data-pagefind-body class="w-full max-w-full min-w-0 flex-1">
       
-      {/* 1. TRẠM BƠM DỮ LIỆU: Filter cho Pagefind */}
+      {/* Filter for Pagefind */}
       <div class="hidden">
         {category && <span data-pagefind-filter="category">{category}</span>}
         {tags && tags.map((t: string) => (
@@ -68,21 +67,21 @@ const { cveId, severity, cvss, category } = data;
         </div>
       </div>
 
-      {/* 2. NỘI DUNG CHÍNH */}
+      {/* 2. Main content */}
       <div class="mt-10 markdown-body prose prose-invert max-w-none" id="post-content" data-pagefind-ignore="all">
         <slot />
       </div>
 
-      {/* ĐÃ XÓA PHẦN COMMENT TẠI ĐÂY */}
+  
       <div class="mt-16 border-t border-white/10 pt-10" data-pagefind-ignore>
-         {/* Khoảng trống cuối bài */}
+         {/* Space */}
       </div>
     </article>
 
     <aside class="hidden shrink-0 lg:block lg:w-[300px] xl:w-[380px]">
       <div class="sticky top-24 flex flex-col gap-4 h-[calc(100vh-8rem)]">
         
-        {/* BẢNG CVE */}
+        {/* CVE Detail */}
         {cveId && (
           <div class="shrink-0" data-pagefind-ignore>
             <CVEInfo id={cveId} severity={severity} cvss={cvss} />
@@ -102,7 +101,6 @@ const { cveId, severity, cvss, category } = data;
 </BaseLayout>
 
 <style is:global>
-  /* GHI ĐÈ CSS CỦA TOC: Ép nó lấp đầy khung */
   .toc-wrapper #toc {
     margin-top: 0 !important;
     height: 100% !important;
@@ -121,7 +119,6 @@ const { cveId, severity, cvss, category } = data;
     overflow-y: auto !important;
   }
   
-  /* FIX THANH CUỘN TOC: Chuyển sang tông Amber đồng bộ */
   .toc-wrapper nav::-webkit-scrollbar { width: 4px !important; }
   .toc-wrapper nav::-webkit-scrollbar-track { background: transparent !important; }
   .toc-wrapper nav::-webkit-scrollbar-thumb { 

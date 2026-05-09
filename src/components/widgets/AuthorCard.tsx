@@ -23,10 +23,8 @@ const isImageUrl = (str: string): boolean => {
   return /^\/.*\.(png|jpg|jpeg|gif|svg|webp)$/i.test(str);
 };
 
-// 將 SimpleIcon 名稱轉換為 @icons-pack/react-simple-icons 的元件名稱
-// 注意：iconName 應該已經是符合套件匯出格式的 PascalCase，例如 "Github"、"X"、"Linkedin"
 const getSimpleIconComponentName = (iconName: string): string => {
-  // 直接加上 "Si" 前綴，使用傳入的名稱，不再嘗試變更大小寫
+
   return `Si${iconName}`;
 };
 
@@ -37,7 +35,6 @@ const DynamicIcon = ({
   iconName: string;
   size?: number;
 }) => {
-  // 使用 React.lazy 動態匯入對應的圖示
   const IconComponent = useMemo(() => {
     return lazy(() =>
       import("@icons-pack/react-simple-icons")
@@ -48,7 +45,6 @@ const DynamicIcon = ({
           return { default: Icon as React.ComponentType<any> };
         })
         .catch(async () => {
-          // 找不到圖示時的降級處理（例如回傳一個預設圖示）
           const mod = await import("lucide-react");
           return {
             default: mod.Earth,
@@ -73,7 +69,7 @@ function AuthorCard({
 }: AuthorCardProps) {
   return (
     <Card className="relative overflow-hidden bg-gray-800 p-4">
-      {/* 裝飾性背景圖 - 右下角 */}
+      {/* Decorative background image - lower right corner */}
       <div className="pointer-events-none absolute right-0 bottom-0 h-[171px] w-[171px] opacity-40">
         <img
           src={image}
@@ -90,7 +86,7 @@ function AuthorCard({
         />
       </div>
 
-      {/* 卡片內容 */}
+      {/* Card Content */}
       <div className="relative z-10 flex justify-start gap-4">
         <Avatar className="h-12 w-12">
           <AvatarImage src={image} alt={name} />

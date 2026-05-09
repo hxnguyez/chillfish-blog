@@ -10,7 +10,6 @@ interface Props {
 
 const { class: className } = Astro.props;
 
-// Kiểm tra tính duy nhất của defaultOpen
 const html = await Astro.slots
   .render("default")
   .then((result) => result.replace(/&quot;/g, '"'));

@@ -24,13 +24,12 @@ const { class: className } = Astro.props;
     if (!scrollToTopBtn) return;
 
     const handleScroll = () => {
-      // Tăng độ nhạy: Chỉ cần cuộn 200px là hiện
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       scrollToTopBtn.setAttribute("data-show", scrollTop > 200 ? "true" : "false");
     };
 
     const scrollToTop = () => {
-      window.scrollTo({ top: 0, behavior: "auto" }); // Đổi sang auto cho nhẹ máy
+      window.scrollTo({ top: 0, behavior: "auto" }); 
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -38,7 +37,6 @@ const { class: className } = Astro.props;
     handleScroll();
   }
 
-  // Tương thích cho cả khi có hoặc không có ClientRouter
   document.addEventListener("DOMContentLoaded", initToTop);
   document.addEventListener("astro:page-load", initToTop);
 </script>

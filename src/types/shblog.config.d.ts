@@ -2,7 +2,6 @@ import type { LucideIcon } from "lucide-react";
 import type { InputPosition, Mapping } from "@giscus/react";
 import * as SimpleIcons from "simple-icons-astro";
 
-// 定義支援的語言類型
 type SupportedLanguage = "en";
 
 interface NavLink {
@@ -83,10 +82,7 @@ interface Behavior {
     minDepth: number;
     maxDepth: number;
   };
-  // panguConfig: {
-  //   enable: boolean;
-  //   excludeHtmlTags: string[];
-  // };
+  
   rss: {
     enable: boolean;
     protectContent: boolean;

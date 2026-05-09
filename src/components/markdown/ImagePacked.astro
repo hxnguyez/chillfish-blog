@@ -9,8 +9,6 @@ interface Props {
 }
 
 const { src, alt = "", title, ...rest } = Astro.props;
-
-// Tối ưu: Mặc định ảnh lớn nhưng dùng loading lazy để không lag khi cuộn bài viết
 const width = rest.width || 1200;
 const height = rest.height || 675;
 ---

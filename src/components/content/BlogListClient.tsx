@@ -12,7 +12,6 @@ import {
   PaginationNext,
 } from "@ui/pagination.tsx";
 
-// Lưu ý: Nếu bạn muốn ảnh Template làm mặc định, hãy sửa trực tiếp ở đây
 const FALLBACK_IMAGE = "/assets/blog/orange.jpg";
 
 type Post = {
@@ -21,7 +20,7 @@ type Post = {
     title: string;
     description?: string;
     pubDate: string; 
-    heroImage?: string | null; // FIX: Đã đổi từ Object sang String
+    heroImage?: string | null; 
     category: string | string[] | null;
     tags: string[] | null;
   };
@@ -96,7 +95,6 @@ export default function BlogListClient({
                 title={post.data.title}
                 description={post.data.description}
                 pubDate={post.data.pubDate.toISOString()}
-                // FIX: Lấy trực tiếp heroImage (vì giờ nó là string), nếu không có mới dùng fallback
                 heroImage={post.data.heroImage || FALLBACK_IMAGE}
                 category={post.data.category}
                 tags={post.data.tags}

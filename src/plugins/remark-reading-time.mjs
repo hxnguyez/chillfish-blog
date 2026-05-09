@@ -6,7 +6,6 @@ export function remarkReadingTime() {
     const textOnPage = toString(tree);
     const readingTime = getReadingTime(textOnPage);
     
-    // Xuất dữ liệu ra frontmatter để dùng trong các component Astro
     data.astro.frontmatter.minutesRead = readingTime.text;
   };
 }

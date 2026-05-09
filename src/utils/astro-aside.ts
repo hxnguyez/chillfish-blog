@@ -7,7 +7,6 @@ import { visit } from "unist-util-visit";
 import type { BlockContent } from "mdast";
 import type { MdxJsxAttribute } from "mdast-util-mdx-jsx";
 
-// This file defines an Astro integration that transforms custom markdown directives into Astro components.
 
 interface NodeProps {
   attributes?: Record<string, string | boolean | number | undefined | null>;
@@ -27,7 +26,6 @@ export function makeComponentNode(
     type: "mdxJsxFlowElement",
     name,
     attributes: Object.entries(attributes)
-      // Filter out non-truthy attributes to avoid empty attrs being parsed as `true`.
       .filter(([_k, v]) => v !== false && Boolean(v))
       .map(([name, value]) => ({
         type: "mdxJsxAttribute",
@@ -62,7 +60,6 @@ function remarkAsides(): unified.Plugin<[], mdast.Root> {
         }
       });
 
-      // Replace this node with the aside component it represents.
       parent.children[index] = makeComponentNode(
         AsideTagname,
         { attributes: { type, title } },
