@@ -3,7 +3,7 @@
   "include": [".astro/types.d.ts", "**/*", "./shblog.config.ts"],
   "exclude": ["dist"],
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
+    
     "strictNullChecks": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",

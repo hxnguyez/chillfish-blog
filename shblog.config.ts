@@ -57,8 +57,8 @@ const config = defineConfig({
   behavior: {
     tableOfContents: { enable: true, minDepth: 2, maxDepth: 4 },
     commentConfig: {
-      enableComment: false, 
-      giscusConfig: { repo: "", repoId: "", category: "", categoryId: "", mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en" },
+      enableComment: "None",
+      giscusConfig: { repo: "hxnguyez/chillfish-blog", repoId: "", category: "", categoryId: "", mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en" },
     },
     gtmConfig: { googleTagManagerId: "" },
   },

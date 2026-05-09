@@ -67,6 +67,13 @@ const defaultConfig: ShBlogConfig = {
   friendLinks: [],
 
   behavior: {
+    commentConfig: {
+      enableComment: "None",
+      giscusConfig: { repo: "hxnguyez/chillfish-blog", repoId: "", category: "", categoryId: "", mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en" },
+      utterancesConfig: { repo: "hxnguyez/chillfish-blog", issueTerm: "pathname", label: "", theme: "github-light" },
+    },
+    enableGTM: false,
+    gtmConfig: { googleTagManagerId: "" },
     enable404EasterEgg: true,
     tableOfContents: { enable: true, minDepth: 2, maxDepth: 4 },
     rss: { enable: true, protectContent: true, enableStylesheet: true },
