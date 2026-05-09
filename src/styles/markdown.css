@@ -40,7 +40,7 @@
     & h5, & h6 { font-size: 1rem !important; }
 
     /* ========================================= */
-    /* 2. LIST (Đã đổi màu marker sang Amber)   */
+    /* 2. LIST (Màu marker Amber)                */
     /* ========================================= */
     & ul, & ol { @apply pl-6 mb-6 text-lg leading-relaxed text-neutral-400; }
     & ul { @apply list-disc list-outside marker:text-amber-500/70; }
@@ -48,15 +48,12 @@
     & li { @apply pl-2 mb-2 break-words; }
     & li > ul, & li > ol { @apply mt-2 mb-0 border-l border-white/10 pl-6 ml-1; }
 
-    /* 引言樣式 (Blockquote - Đổi sang Amber) */
+    /* 引言樣式 (Blockquote - Amber) */
     & blockquote {
       @apply ml-0 border-l-4 border-amber-500/50 bg-amber-500/5 py-2 pl-4 font-serif text-neutral-300 italic transition-all duration-300 hover:border-amber-400;
-
       & p { @apply transition-colors duration-300 group-hover:text-neutral-100 mb-0; }
-
       & .citation-wrapper {
         @apply mt-2 text-sm text-neutral-500 transition-colors delay-100 duration-300 group-hover:text-neutral-400;
-
         & cite.blockquote-citation::before {
           content: ""; display: inline-block; width: 20px; height: 1px;
           margin-right: 8px; vertical-align: super;
@@ -66,21 +63,56 @@
     }
 
     /* ========================================= */
-    /* 3. CODE BLOCK & TABLE (Đổi hover)         */
+    /* 3. CODE BLOCK & TABLE (FIX SCROLLBAR)     */
     /* ========================================= */
     .ec-line { @apply font-mono!; }
 
-    & pre {
-      @apply max-w-full pb-3 pt-1 rounded-lg border border-white/10 shadow-lg; 
-      overflow-x: auto !important; white-space: pre !important;
+    /* Reset thẻ code để tránh bị wrap dòng */
+    & pre code {
+      white-space: pre !important;
+      word-break: normal !important;
+      word-wrap: normal !important;
     }
 
-    & pre > code, & pre code {
-      display: inline-block !important; min-width: 100% !important;
-      white-space: pre !important; word-break: normal !important;
-      word-wrap: normal !important; padding-right: 1.5rem !important;
+    /* Cấu hình thẻ pre và các class của plugin render code */
+    & pre, 
+    & .expressive-code pre,
+    & [class*="rehype-pretty-code"] pre {
+      @apply max-w-full pb-4! pt-2 rounded-lg border border-white/10 shadow-lg bg-neutral-900/50; 
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      display: block !important;
     }
 
+    /* Ép hiện thanh cuộn Cam Vàng cho mọi loại Code Block */
+    & pre::-webkit-scrollbar,
+    & [class*="expressive-code"] pre::-webkit-scrollbar,
+    & [class*="rehype-pretty-code"] pre::-webkit-scrollbar {
+      height: 8px !important;
+      display: block !important;
+    }
+
+    & pre::-webkit-scrollbar-thumb,
+    & [class*="expressive-code"] pre::-webkit-scrollbar-thumb,
+    & [class*="rehype-pretty-code"] pre::-webkit-scrollbar-thumb {
+      background-color: rgba(245, 158, 11, 0.4) !important;
+      border-radius: 10px !important;
+      border: 2px solid transparent !important;
+      background-clip: content-box !important;
+    }
+
+    & pre::-webkit-scrollbar-thumb:hover,
+    & [class*="expressive-code"] pre::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(245, 158, 11, 0.8) !important;
+    }
+
+    & pre::-webkit-scrollbar-track,
+    & [class*="expressive-code"] pre::-webkit-scrollbar-track {
+      background-color: rgba(0, 0, 0, 0.2) !important;
+      border-radius: 10px !important;
+    }
+
+    /* Table styles */
     & table { @apply block w-fit max-w-full border-collapse overflow-x-auto rounded-lg border border-white/10 whitespace-nowrap; }
     & th, & td { @apply border border-white/10 p-3 transition-colors duration-300; }
     & th { @apply text-left font-bold text-amber-500 bg-neutral-900; }
@@ -91,10 +123,11 @@
       &:hover { @apply bg-amber-500/10 transition-colors duration-300; }
     }
 
-    /* 分隔線樣式 (HR) */
+    /* ========================================= */
+    /* 4. LINKS & INLINE ELEMENTS                */
+    /* ========================================= */
     & hr { @apply mx-auto my-10 max-w-3xl justify-center border-t border-dashed border-white/20; }
 
-    /* 行內元素樣式 (Links & Inline code - Đổi sang Amber) */
     & a:not(.sh-builtin-components, .anchor) {
       @apply relative px-1 font-semibold text-amber-500 transition-all duration-300;
       text-decoration: underline; text-decoration-color: rgba(245, 158, 11, 0.3);
@@ -107,12 +140,12 @@
       @apply rounded bg-neutral-800/80 px-1.5 py-0.5 font-mono text-[0.9em] text-amber-300 break-all transition-colors duration-300 border border-white/10;
     }
 
-    /* 圖片樣式 (Images) */
+    /* Images */
     & img { @apply my-6 rounded-lg border border-white/10 shadow-lg block mx-auto; }
     .anchor-icon, a.anchor { display: none !important; }
 
     /* ========================================= */
-    /* 4. SCROLLBAR (Đổi màu Cam vàng)           */
+    /* 5. MAIN SCROLLBAR                         */
     /* ========================================= */
     & *::-webkit-scrollbar { height: 8px !important; width: 8px !important; }
     & *::-webkit-scrollbar-thumb {
@@ -124,7 +157,7 @@
     }
   }
 
-  /* medium-zoom的樣式 */
+  /* Medium zoom */
   .medium-zoom-overlay { @apply z-60 bg-neutral-950/90! backdrop-blur-md; }
   .medium-zoom-image--opened { @apply z-61 rounded border-none shadow-2xl; }
 }

@@ -23,7 +23,7 @@ const ImagePacked = (await import("@components/markdown/ImagePacked.astro")).def
 const BlockQuotePacked = (await import("@components/markdown/BlockQuotePacked.astro")).default;
 ---
 
-<BlogPost {...post.data} headings={headings} collection="wip">
+<BlogPost {...post.data} headings={headings} collection="wip" description={post.data.description ?? ""}>
   <Content
     components={{
       img: ImagePacked,

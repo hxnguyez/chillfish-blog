@@ -1,6 +1,5 @@
 ---
 import config from "@shConfig";
-import { Mail } from "lucide-react";
 
 let year: number | null = null;
 if (config.footer.copyright.yearUpdateStrategy === "fixed") {
@@ -130,7 +129,7 @@ if (config.footer.copyright.yearUpdateStrategy === "fixed") {
     }
 
     if (audio.src && audio.src.includes('.mp3')) {
-      const currentSrc = audio.getAttribute('src');
+      const currentSrc = audio.getAttribute('src') ?? "";
       currentIndex = playlist.findIndex(t => currentSrc.includes(t.src));
       if (currentIndex === -1) currentIndex = 0;
       if (trackTitle) trackTitle.textContent = playlist[currentIndex].title;

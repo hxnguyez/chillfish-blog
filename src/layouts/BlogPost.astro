@@ -23,11 +23,11 @@ import CVEInfo from "@components/post/CVEInfo.astro";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   pubDate: Date;
   updatedDate?: Date;
   heroImage?: any;
-  collection?: "blog" | "lab" | "research";
+  collection?: "blog" | "lab" | "research" | "wip";
   headings: Array<{ depth: number; slug: string; text: string }>;
   tags?: CollectionEntry<"blog">["data"]["tags"];
 }
@@ -39,11 +39,11 @@ const data = (Astro.props as any).data || (Astro.props as any).frontmatter || As
 const { cveId, severity, cvss, category } = data;
 ---
 
-<BaseLayout title={`${title} ${SEPARATOR} ${config.title}`} description={description} coverImage={heroImage}>
+<BaseLayout title={`${title} ${SEPARATOR} ${config.title}`} description={description ?? ""} coverImage={heroImage}>
   <Hero backgroundImage={heroImage || DEFAULT_POST_IMAGE}>
     <div class="lg:col-span-2" slot="left">
       <HeroTitle>{title}</HeroTitle>
-      <HeroSubtitle slot="right">{description}</HeroSubtitle>
+      <HeroSubtitle slot="right">{description ?? ""}</HeroSubtitle>
     </div>
   </Hero>
 

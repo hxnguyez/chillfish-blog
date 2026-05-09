@@ -17,8 +17,6 @@ const researchPosts = await getCollection("research", ({ data }) => {
   if (import.meta.env.DEV) return true;
   return data.draft !== true;
 });
-console.log("👉 [DEBUG] Số bài viết trong Research:", researchPosts.length);
-console.log("👉 [DEBUG] Số bài viết trong Lab:", labPosts.length);
 
 labPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 researchPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -116,40 +114,45 @@ const { title, subTitle, heroImage } = config.pages.other.lab;
 
 <script>
   function setupTabs() {
-    const btnResearch = document.getElementById('btn-research');
-    const btnLab = document.getElementById('btn-lab');
-    const contentResearch = document.getElementById('content-research');
-    const contentLab = document.getElementById('content-lab');
+    const btnResearch = document.getElementById('btn-research') as HTMLButtonElement | null;
+    const btnLab = document.getElementById('btn-lab') as HTMLButtonElement | null;
+    const contentResearch = document.getElementById('content-research') as HTMLDivElement | null;
+    const contentLab = document.getElementById('content-lab') as HTMLDivElement | null;
 
     if (!btnResearch || !btnLab || !contentResearch || !contentLab) return;
+
+    const btnResearchEl = btnResearch;
+    const btnLabEl = btnLab;
+    const contentResearchEl = contentResearch;
+    const contentLabEl = contentLab;
 
     const activeClasses = ['bg-[#21262d]', 'text-white', 'shadow-sm', 'border-[#30363d]'];
     const inactiveClasses = ['text-[#8b949e]', 'border-transparent', 'hover:text-white'];
 
     function showResearch() {
-      contentResearch.style.display = 'block';
-      contentLab.style.display = 'none';
+      contentResearchEl.style.display = 'block';
+      contentLabEl.style.display = 'none';
       
-      btnResearch.classList.add(...activeClasses);
-      btnResearch.classList.remove(...inactiveClasses);
+      btnResearchEl.classList.add(...activeClasses);
+      btnResearchEl.classList.remove(...inactiveClasses);
       
-      btnLab.classList.remove(...activeClasses);
-      btnLab.classList.add(...inactiveClasses);
+      btnLabEl.classList.remove(...activeClasses);
+      btnLabEl.classList.add(...inactiveClasses);
     }
 
     function showLab() {
-      contentLab.style.display = 'block';
-      contentResearch.style.display = 'none';
+      contentLabEl.style.display = 'block';
+      contentResearchEl.style.display = 'none';
       
-      btnLab.classList.add(...activeClasses);
-      btnLab.classList.remove(...inactiveClasses);
+      btnLabEl.classList.add(...activeClasses);
+      btnLabEl.classList.remove(...inactiveClasses);
       
-      btnResearch.classList.remove(...activeClasses);
-      btnResearch.classList.add(...inactiveClasses);
+      btnResearchEl.classList.remove(...activeClasses);
+      btnResearchEl.classList.add(...inactiveClasses);
     }
 
-    btnResearch.addEventListener('click', showResearch);
-    btnLab.addEventListener('click', showLab);
+    btnResearchEl.addEventListener('click', showResearch);
+    btnLabEl.addEventListener('click', showLab);
 
     // Set initial state
     showResearch();

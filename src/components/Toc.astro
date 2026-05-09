@@ -1,5 +1,4 @@
 ---
-import { Button } from "@ui/button";
 import { CardTitle } from "@ui/card";
 import { ChevronDown } from "lucide-react";
 import config from "@shConfig";
@@ -56,7 +55,6 @@ const tocTree = headings
               <div class="flex items-center group">
                 <a
                   href={`#${item.slug}`}
-                  {/* Đổi hover sang Amber */}
                   class={`toc-link toc-level-${item.depth} flex-1 truncate rounded-md px-3 py-1.5 text-[13px] text-neutral-400 transition-all hover:bg-white/5 hover:text-amber-500`}
                   data-heading-slug={item.slug}
                 >
@@ -64,7 +62,6 @@ const tocTree = headings
                 </a>
                 {item.children.length > 0 && (
                   <button 
-                    {/* Đổi hover của nút xổ xuống sang Amber */}
                     class="toc-toggle p-1.5 text-neutral-600 hover:text-amber-500 transition-all"
                     data-toggle-target={`toc-children-${index}`}
                   >
@@ -82,7 +79,6 @@ const tocTree = headings
                     <li>
                       <a
                         href={`#${child.slug}`}
-                        {/* Đổi hover của mục con sang Amber */}
                         class={`toc-link toc-level-${child.depth} block truncate rounded-md px-3 py-1 text-[11px] text-neutral-500 transition-all hover:text-amber-500 hover:bg-white/5`}
                         data-heading-slug={child.slug}
                       >

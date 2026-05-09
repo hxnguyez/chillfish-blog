@@ -24,7 +24,7 @@ const BlockQuotePacked = (await import("@components/markdown/BlockQuotePacked.as
   .default;
 ---
 
-<BlogPost {...post.data} headings={headings}>
+<BlogPost {...post.data} headings={headings} description={post.data.description ?? ""}>
   <Content
     components={{
       img: ImagePacked,

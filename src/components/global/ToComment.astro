@@ -6,7 +6,7 @@ import { ToCommentButton } from "./ToComment";
 
 <!-- Client-side JavaScript: Handles interaction -->
 <script>
-  const handleToComment = (id) => {
+  const handleToComment = (id: string) => {
     const btn = document.getElementById(id);
     if (!btn) return;
     btn.addEventListener("click", () => {

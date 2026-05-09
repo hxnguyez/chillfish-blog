@@ -48,7 +48,7 @@ const featuredPost = posts[0];
               class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
               style={{
                 backgroundImage: featuredPost.data.heroImage
-                  ? `url(${typeof featuredPost.data.heroImage === 'string' ? featuredPost.data.heroImage : featuredPost.data.heroImage.src})`
+                  ? `url(${featuredPost.data.heroImage})`
                   : `url(${config.style.defaultPostImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",

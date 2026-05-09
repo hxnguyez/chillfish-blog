@@ -27,7 +27,7 @@ const ImagePacked = (await import("@components/markdown/ImagePacked.astro")).def
 const BlockQuotePacked = (await import("@components/markdown/BlockQuotePacked.astro")).default;
 ---
 
-<BlogPost {...post.data} collection="lab" headings={headings}>
+<BlogPost {...post.data} collection="lab" headings={headings} description={post.data.description ?? ""}>
   {/* Đổ nội dung Markdown vào Layout, kèm theo các component xử lý ảnh và blockquote */}
   <Content
     components={{

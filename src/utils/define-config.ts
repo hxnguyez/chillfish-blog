@@ -73,6 +73,8 @@ const defaultConfig: ShBlogConfig = {
     ],
   },
 
+  friendLinks: [],
+
   behavior: {
     commentConfig: {
       enableComment: "Giscus",
@@ -80,6 +82,12 @@ const defaultConfig: ShBlogConfig = {
         repo: "hxnguyez/chillfish-blog",
         repoId: "", category: "Announcements", categoryId: "", 
         mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en",
+      },
+      utterancesConfig: {
+        repo: "hxnguyez/chillfish-blog",
+        issueTerm: "pathname",
+        label: "comment",
+        theme: "github-dark",
       },
     },
     enableGTM: false,
