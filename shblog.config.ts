@@ -13,7 +13,6 @@ const config = defineConfig({
       from: 50,
       to: 80,
     },
-    // Không khai báo defaultPostImage ở đây nữa
     postsPerPage: 10,
     titleSeparator: "|",
     enableTransitions: true,
@@ -55,17 +54,9 @@ const config = defineConfig({
     ],
   },
 
+  // ĐÃ XÓA TOÀN BỘ COMMENT CONFIG TẠI ĐÂY
   behavior: {
-    commentConfig: {
-      enableComment: "Giscus",
-      giscusConfig: {
-        repo: "hxnguyez/chillfish-blog",
-        repoId: "R_kgDN9m03Yg", 
-        category: "Announcements", 
-        categoryId: "DIC_kwDON9m03s4Ck_u-", 
-        mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en",
-      },
-    },
+    tableOfContents: { enable: true, minDepth: 2, maxDepth: 4 },
   },
 
   footer: {

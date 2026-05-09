@@ -1,15 +1,6 @@
-import { Newspaper, Handshake, Home, Info, Beaker } from "lucide-react";
-
-// Import Github từ đúng thư viện dành cho brand icon
+import { Newspaper, Home, Info, Beaker } from "lucide-react";
 import { Github } from "simple-icons-astro";
-
 import type { ShBlogConfig } from "../types/shblog.config.d";
-
-/**
- * TỐI ƯU: 
- * 1. Chuyển sang Named Import cho lucide-react để tránh lỗi "default is not exported".
- * 2. Giữ nguyên toàn bộ cấu hình dự án của Hưng.
- */
 
 const defaultConfig: ShBlogConfig = {
   title: "chillfish Blog",
@@ -75,23 +66,8 @@ const defaultConfig: ShBlogConfig = {
 
   friendLinks: [],
 
+  // ĐÃ LOẠI BỎ COMMENT, GTM, VÀ CÁC THỨ KHÔNG CẦN THIẾT
   behavior: {
-    commentConfig: {
-      enableComment: "Giscus",
-      giscusConfig: {
-        repo: "hxnguyez/chillfish-blog",
-        repoId: "", category: "Announcements", categoryId: "", 
-        mapping: "og:title", strict: "0", reactionsEnabled: "1", emitMetadata: "1", inputPosition: "top", theme: "transparent_dark", lang: "en",
-      },
-      utterancesConfig: {
-        repo: "hxnguyez/chillfish-blog",
-        issueTerm: "pathname",
-        label: "comment",
-        theme: "github-dark",
-      },
-    },
-    enableGTM: false,
-    gtmConfig: { googleTagManagerId: "" },
     enable404EasterEgg: true,
     tableOfContents: { enable: true, minDepth: 2, maxDepth: 4 },
     rss: { enable: true, protectContent: true, enableStylesheet: true },
@@ -105,7 +81,7 @@ const defaultConfig: ShBlogConfig = {
       url: "https://creativecommons.org/licenses/by-nc/4.0/",
       yearUpdateStrategy: "auto",
     },
-    countryEmoji: "⾮🇻🇳",
+    countryEmoji: "🇻🇳",
   },
 };
 
