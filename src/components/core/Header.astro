@@ -7,14 +7,8 @@ import { FAVICON_URL } from "../../consts.ts";
 import { SearchDialog } from "../search/SearchDialog";
 
 const links = config.navBar.links;
-
-// Lấy pathname hiện tại để so sánh
 const { pathname } = Astro.url;
 
-/**
- * Hàm kiểm tra xem link có đang active hay không
- * isActive sẽ đúng nếu pathname khớp hoàn toàn hoặc là con của href (ví dụ /wip/abc thuộc /wip)
- */
 const checkActive = (href: string) => {
   if (href === '/' && pathname !== '/') return false;
   return pathname === href || pathname.startsWith(href);
@@ -40,12 +34,11 @@ const checkActive = (href: string) => {
             <div class="flex items-center">
               <a 
                 href={link.href} 
-                class={`relative px-2 text-sm font-medium uppercase transition-all lg:px-4 ${isActive ? 'text-cyan-400' : 'text-white hover:text-white/80'}`}
+                class={`relative px-2 text-sm font-medium uppercase transition-all lg:px-4 ${isActive ? 'text-amber-500' : 'text-white hover:text-white/80'}`}
               >
                 {link.title}
-                {/* Gạch chân dưới chữ khi active */}
                 {isActive && (
-                  <span class="absolute -bottom-2 left-1/2 h-[2px] w-4 -translate-x-1/2 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+                  <span class="absolute -bottom-2 left-1/2 h-[2px] w-4 -translate-x-1/2 bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
                 )}
               </a>
               {index < links.length - 1 && <span class="text-sm text-neutral-400 select-none">/</span>}
@@ -61,7 +54,7 @@ const checkActive = (href: string) => {
             <div class="flex items-center">
               <a 
                 href={link.href} 
-                class={`px-2 text-sm font-medium transition-all ${isActive ? 'text-green-500 scale-110' : 'text-white hover:text-white/80'}`}
+                class={`px-2 text-sm font-medium transition-all ${isActive ? 'text-amber-500 scale-110' : 'text-white hover:text-white/80'}`}
               >
                 <link.icon size={16} />
               </a>
@@ -71,8 +64,11 @@ const checkActive = (href: string) => {
       </div>
 
       <div class="hidden items-center gap-2 md:flex">
-        <a href={`mailto:${config.author.email}`} target="_blank">
-          <Button client:load variant="ghost" size="icon" className="rounded-lg hover:bg-white/5"><Mail size={18} /></Button>
+        {/* ĐÃ SỬA TẠI ĐÂY: Trỏ về trang /contact thay vì mở mail client */}
+        <a href="/contact">
+          <Button client:load variant="ghost" size="icon" className="rounded-lg hover:bg-white/5">
+            <Mail size={18} />
+          </Button>
         </a>
         <SearchDialog client:load />
       </div>

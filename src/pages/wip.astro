@@ -18,6 +18,12 @@ const currentYear = now.getFullYear();
 const currentMonth = now.getMonth();
 const years = [2027, 2026];
 
+// Helper function để lấy YYYY-MM-DD theo múi giờ địa phương (Local Time)
+function getLocalDateString(date: Date) {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function getYearGridData(year: number) {
   const startDate = new Date(year, 0, 1);
   const startDayOfWeek = startDate.getDay();
@@ -32,7 +38,7 @@ function getYearGridData(year: number) {
 
   const yearLogs = allLogs.filter(log => new Date(log.data.pubDate).getFullYear() === year);
   const logCounts = yearLogs.reduce((acc: any, log) => {
-    const dateKey = new Date(log.data.pubDate).toISOString().split('T')[0];
+    const dateKey = getLocalDateString(new Date(log.data.pubDate));
     acc[dateKey] = (acc[dateKey] || 0) + 1;
     return acc;
   }, {});
@@ -42,7 +48,7 @@ function getYearGridData(year: number) {
 
 const pageConfig = config.pages.other?.wip || {
   title: "Work In Progress",
-  subTitle: "Day logs & Development history",
+  subTitle: "Daily logs & Development history",
   heroImage: config.pages.blog.heroImage 
 };
 const { title, subTitle, heroImage } = pageConfig;
@@ -79,7 +85,7 @@ const { title, subTitle, heroImage } = pageConfig;
             <div id={`grid-${y}`} class={`year-grid-content w-full overflow-hidden ${y === currentYear ? 'block' : 'hidden'}`}>
               <div class="grid grid-rows-7 grid-flow-col gap-[2px] w-max relative isolation-isolate" id="contribution-grid">
                 {days.map((date) => {
-                  const dateStr = date.toISOString().split('T')[0];
+                  const dateStr = getLocalDateString(date);
                   const count = logCounts[dateStr] || 0;
                   const isCurrentYear = date.getFullYear() === y;
                   const tooltipDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -119,7 +125,7 @@ const { title, subTitle, heroImage } = pageConfig;
       <div id="logs-list" class="space-y-2">
         {allLogs.sort((a,b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).map((post) => {
           const dateObj = new Date(post.data.pubDate);
-          const dateStr = dateObj.toISOString().split('T')[0];
+          const dateStr = getLocalDateString(dateObj);
           const displayDate = dateObj.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-');
           
           return (
@@ -128,8 +134,9 @@ const { title, subTitle, heroImage } = pageConfig;
               data-month={dateObj.getMonth()}
               data-year={dateObj.getFullYear()}
             >
-               <span class="text-[10px] font-mono text-[#484f58] min-w-[40px] select-none">[{displayDate}]</span>
-               <div class={`h-2.5 w-2.5 rounded-full shrink-0 ${dateObj.toDateString() === now.toDateString() ? 'bg-green-500 ring-4 ring-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-[#30363d]'}`}></div>
+               {/* Sửa màu sáng tại đây: text-neutral-300 */}
+               <span class="text-[10px] font-mono text-neutral-300 min-w-[40px] select-none">[{displayDate}]</span>
+               <div class={`h-2.5 w-2.5 rounded-full shrink-0 ${getLocalDateString(dateObj) === getLocalDateString(now) ? 'bg-green-500 ring-4 ring-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-[#30363d]'}`}></div>
                <div class="flex-1 overflow-hidden">
                  <TimelineSinglePost postData={post} postTags={post.data.tags || []} />
                </div>
@@ -217,14 +224,12 @@ const { title, subTitle, heroImage } = pageConfig;
   #contribution-grid { isolation: isolate; }
   .group\/item:hover { z-index: 50; }
   
-  /* Cấu trúc dòng log chuẩn */
   .log-item {
     display: flex;
     align-items: center;
     min-height: 44px;
   }
 
-  /* Ghi đè CSS cho TimelineSinglePost để ép thẳng hàng */
   .log-item :global(a) {
     display: flex !important;
     align-items: center !important;
@@ -234,15 +239,13 @@ const { title, subTitle, heroImage } = pageConfig;
     width: 100%;
   }
 
-  /* Chỉnh Title nhỏ lại và không nhảy dòng */
   .log-item :global(h3) {
-    font-size: 0.875rem !important; /* text-sm */
+    font-size: 0.875rem !important;
     margin-bottom: 0 !important;
     white-space: nowrap;
     font-weight: 600 !important;
   }
 
-  /* Chỉnh Badge (Tag) nhỏ lại và khớp hàng */
   .log-item :global(.inline-flex) {
     font-size: 10px !important;
     padding-top: 0.125rem !important;
@@ -253,7 +256,6 @@ const { title, subTitle, heroImage } = pageConfig;
     background-color: #161b22 !important;
   }
   
-  /* Chỉnh icon trong Badge */
   .log-item :global(svg) {
     width: 10px !important;
     height: 10px !important;

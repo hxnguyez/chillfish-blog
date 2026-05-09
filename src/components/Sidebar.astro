@@ -3,14 +3,16 @@ import config from "@shConfig";
 import AuthorCard from "./widgets/AuthorCard";
 import DiscordCard from "./widgets/DiscordCard";
 
+// Nhận biến isPost để biết đang ở đâu
 interface Props {
   isPost?: boolean;
 }
 const { isPost = false } = Astro.props;
 ---
 
-<div class="flex w-full flex-col gap-5 h-full" data-pagefind-ignore>
+<div class="sticky top-24 flex w-full flex-col gap-5 max-h-[calc(100vh-6rem)]" data-pagefind-ignore>
   
+  {/* Chỉ hiện Author và Discord nếu KHÔNG PHẢI là bài viết Blog */}
   {!isPost && (
     <div class="flex flex-col gap-5 shrink-0">
       <AuthorCard
@@ -34,7 +36,14 @@ const { isPost = false } = Astro.props;
     </div>
   )}
 
-  <div class="flex-1 overflow-y-auto pr-1 select-none">
+  {/* ToC và CVE sẽ luôn nằm trong slot này */}
+  <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar-mini select-none">
     <slot />
   </div>
 </div>
+
+<style>
+  /* Giữ nguyên CSS scrollbar cũ của Hưng */
+  .custom-scrollbar-mini::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar-mini::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+</style>

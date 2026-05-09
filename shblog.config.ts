@@ -41,7 +41,7 @@ const config = defineConfig({
 
   author: {
     name: "HungNguyen",
-    bio: "FPT University Student | Cybersecurity & CTF Enthusiast。",
+    bio: "FPT University | Cybersecurity student & Noob Researcher。",
     avatarUrl: "/avatar.png", 
     links: [{ icon: "Github", to: "https://github.com/hxnguyez", label: "GitHub" }],
   },

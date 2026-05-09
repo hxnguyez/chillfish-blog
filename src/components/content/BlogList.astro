@@ -12,17 +12,15 @@ const { posts: propsPosts, collection = "blog" } = Astro.props;
 const postsPerPage = config.style.postsPerPage || 6;
 const typedCollection = collection as "blog" | "lab" | "research";
 
+// Lọc bài viết: Bỏ draft, bỏ bài không tiêu đề
 const allPosts = propsPosts || (
   await getCollection(typedCollection, ({ data }: any) => {
-    if (import.meta.env.DEV) return true;
-    return data.draft !== true;
+    return data.draft !== true && !!data.title;
   })
 ).sort((a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// FIX LOGIC SERIALIZATION TẠI ĐÂY
 const serializedPosts = allPosts.map((post: any) => {
-  // Bóc tách heroImage: Nếu là object thì lấy .src, nếu là string thì lấy luôn, nếu không có thì lấy Template
-  let finalImage = "/assets/blog/orange.jpg";
+  let finalImage = config.style.defaultPostImage || "/assets/blog/orange.jpg";
   
   if (post.data.heroImage) {
     if (typeof post.data.heroImage === 'string') {
@@ -32,15 +30,17 @@ const serializedPosts = allPosts.map((post: any) => {
     }
   }
 
+  // FIX LỆCH NGÀY: Lấy ngày theo Local Time để không bị nhảy về UTC (lùi 1 ngày)
+  const d = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
+  const formattedDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
   return {
     id: post.id,
     data: {
       title: post.data.title,
       description: post.data.description,
-      pubDate: post.data.pubDate instanceof Date 
-        ? post.data.pubDate.toISOString() 
-        : post.data.pubDate,
-      heroImage: finalImage, // Bây giờ heroImage luôn là 1 chuỗi URL sạch
+      pubDate: formattedDate, // Trả về chuỗi YYYY-MM-DD cố định
+      heroImage: finalImage,
       category: post.data.category ?? null,
       tags: post.data.tags ?? null,
     },

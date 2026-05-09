@@ -1,0 +1,22 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
+import Hero from "@components/content/Home/Hero.astro";
+import { HeroTitle, HeroSubtitle } from "@components/content/Home/HeroItems";
+import config from "@shConfig";
+
+const heroImage = config.pages.blog.heroImage;
+---
+
+<BaseLayout title="Contact" description="Send me a message">
+  <Hero backgroundImage={heroImage}>
+    <div slot="left">
+      <HeroTitle>CONTACT</HeroTitle>
+      <HeroSubtitle>Connect with me</HeroSubtitle>
+    </div>
+  </Hero>
+
+  <main class="py-20 px-4 bg-black/20">
+    <ContactForm />
+  </main>
+</BaseLayout>

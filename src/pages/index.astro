@@ -12,15 +12,14 @@ import config from "@shConfig";
 import i18n from "@i18n/translation";
 import I18nKey from "@i18n/i18nKey";
 
+// Lấy 6 bài mới nhất, loại bỏ bóng ma
 const posts = (
   await getCollection("blog", ({ data }) => {
-    // Hiển thị tất cả ở dev, lọc draft ở prod
-    if (import.meta.env.DEV) return true;
-    return data.draft !== true;
+    return data.draft !== true && !!data.title;
   })
 )
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6); // Lấy 6 bài mới nhất
+  .slice(0, 6);
 
 const featuredPost = posts[0];
 ---
@@ -48,9 +47,8 @@ const featuredPost = posts[0];
               href={`/blog/${featuredPost.id}/`}
               class="group flex h-57.5 w-[380px] flex-col justify-end overflow-hidden rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-sm transition-all hover:bg-black/50"
               style={{
-                /* TỐI ƯU: Bỏ .src vì heroImage bây giờ là string đường dẫn tĩnh */
                 backgroundImage: featuredPost.data.heroImage
-                  ? `url(${featuredPost.data.heroImage})`
+                  ? `url(${typeof featuredPost.data.heroImage === 'string' ? featuredPost.data.heroImage : featuredPost.data.heroImage.src})`
                   : `url(${config.style.defaultPostImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",

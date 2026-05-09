@@ -42,7 +42,8 @@ const tocTree = headings
     <div class="flex flex-col max-h-[65vh]">
       <div class="border-b border-white/10 px-4 py-3 bg-white/5 flex items-center justify-between">
         <CardTitle className="text-white text-[11px] font-bold tracking-[0.2em] uppercase flex items-center gap-2">
-          <span class="h-1.5 w-1.5 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
+          {/* Đổi màu chấm nhấp nháy sang Amber */}
+          <span class="h-1.5 w-1.5 bg-amber-500 rounded-full shadow-[0_0_8px_#f59e0b] animate-pulse"></span>
           {i18n(I18nKey.post_toc_title)}
         </CardTitle>
         <span class="text-[10px] text-neutral-500 font-mono">[{headings.length}]</span>
@@ -55,14 +56,16 @@ const tocTree = headings
               <div class="flex items-center group">
                 <a
                   href={`#${item.slug}`}
-                  class={`toc-link toc-level-${item.depth} flex-1 truncate rounded-md px-3 py-1.5 text-[13px] text-neutral-400 transition-all hover:bg-white/5 hover:text-cyan-400`}
+                  {/* Đổi hover sang Amber */}
+                  class={`toc-link toc-level-${item.depth} flex-1 truncate rounded-md px-3 py-1.5 text-[13px] text-neutral-400 transition-all hover:bg-white/5 hover:text-amber-500`}
                   data-heading-slug={item.slug}
                 >
                   {item.text}
                 </a>
                 {item.children.length > 0 && (
                   <button 
-                    class="toc-toggle p-1.5 text-neutral-600 hover:text-cyan-400 transition-all"
+                    {/* Đổi hover của nút xổ xuống sang Amber */}
+                    class="toc-toggle p-1.5 text-neutral-600 hover:text-amber-500 transition-all"
                     data-toggle-target={`toc-children-${index}`}
                   >
                     <ChevronDown size={12} className="transition-transform duration-300" />
@@ -79,7 +82,8 @@ const tocTree = headings
                     <li>
                       <a
                         href={`#${child.slug}`}
-                        class={`toc-link toc-level-${child.depth} block truncate rounded-md px-3 py-1 text-[11px] text-neutral-500 transition-all hover:text-cyan-400 hover:bg-white/5`}
+                        {/* Đổi hover của mục con sang Amber */}
+                        class={`toc-link toc-level-${child.depth} block truncate rounded-md px-3 py-1 text-[11px] text-neutral-500 transition-all hover:text-amber-500 hover:bg-white/5`}
                         data-heading-slug={child.slug}
                       >
                         {child.text}
@@ -97,20 +101,21 @@ const tocTree = headings
 </div>
 
 <style>
-  /* Hiệu ứng Active lân cận */
+  /* Hiệu ứng Active lân cận (Đổi sang tông Cam Vàng) */
   .toc-link.active {
-    color: #22d3ee !important;
-    background: rgba(34, 211, 238, 0.08);
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.08);
     font-weight: 600;
     padding-left: 1rem;
-    border-left: 2px solid #22d3ee;
+    border-left: 2px solid #f59e0b;
     border-radius: 0 4px 4px 0;
   }
 
   .custom-scrollbar::-webkit-scrollbar { width: 4px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.3); }
+  /* Thanh cuộn khi hover đổi sang Cam Vàng */
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.3); }
 
   .toc-children {
     transition: max-height 0.3s ease-out, opacity 0.2s ease;
