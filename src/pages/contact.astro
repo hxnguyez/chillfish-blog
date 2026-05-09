@@ -8,15 +8,18 @@ import config from "@shConfig";
 const heroImage = config.pages.blog.heroImage;
 ---
 
-<BaseLayout title="Contact" description="Send me a message">
+<BaseLayout title="Contact" description="Established a secure connection to my terminal.">
   <Hero backgroundImage={heroImage}>
     <div slot="left">
       <HeroTitle>CONTACT</HeroTitle>
+      {/* Subtitle  */}
       <HeroSubtitle>Connect with me</HeroSubtitle>
     </div>
   </Hero>
 
   <main class="py-20 px-4 bg-black/20">
-    <ContactForm />
+    <div class="container mx-auto">
+      <ContactForm />
+    </div>
   </main>
 </BaseLayout>
