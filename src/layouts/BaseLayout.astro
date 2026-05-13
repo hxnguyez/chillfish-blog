@@ -5,7 +5,8 @@ import Header from "../components/core/Header.astro";
 import { SITE_DESCRIPTION } from "../consts.ts";
 import StickyButtons from "../components/global/StickyButtons.astro";
 import config from "@shConfig";
-import { ClientRouter } from "astro:transitions"; 
+import { ClientRouter } from "astro:transitions";
+import Analytics from '@vercel/analytics/astro';
 
 import "../styles/global.css";
 import "../styles/view-transitions.css";
@@ -32,6 +33,9 @@ const { title, description, coverImage } = Astro.props;
     </main>
     <Footer />
     <StickyButtons />
+    
+    {/* Vercel Web Analytics */}
+    <Analytics />
   </body>
 </html>
 

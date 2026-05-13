@@ -40,6 +40,7 @@
     "@types/jsdom": "^27.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^6.0.4",
     "astro-auto-import": "^0.5.1",
     "astro-expressive-code": "^0.41.7",
